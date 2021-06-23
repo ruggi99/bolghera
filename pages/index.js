@@ -270,6 +270,9 @@ function Partita(props) {
         className="header"
         flexWrap="wrap"
       >
+        <Tag size="large" className="campionato">
+          {partita.camp}
+        </Tag>
         <span>{partita.nomeBol}</span>
         <span style={{ margin: "0 .25em" }}>-</span>
         <span style={{ marginRight: "1em" }}>{partita.nomeAvv}</span>
