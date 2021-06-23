@@ -56,17 +56,20 @@ export default function Fusion() {
 function UI(props) {
   var [modalAggiunta, setModalAggiunta] = useState(false);
   var [modalSign, setModalSign] = useState(false);
+  var [modalElimina, setModalElimina] = useState(false);
+  var [camp, setCamp] = useState("");
   var [nomeBol, setNomeBol] = useState("Bolghera");
   var [nomeAvv, setNomeAvv] = useState("Ospiti");
   var [isLogin, setIsLogin] = useState(false);
   var [email, setEmail] = useState("");
   var [password, setPassword] = useState("");
+  var [daEliminare, setDaEliminare] = useState("");
   const aggiungiPartita = () => {
     supabase
       .from(PARTITE_BOLGHERA)
-      .insert({ nomeBol: nomeBol, nomeAvv: nomeAvv })
+      .insert({ nomeBol: nomeBol, nomeAvv: nomeAvv, camp: camp })
       .then();
-    setModalSign(false);
+    setModalAggiunta(false);
   };
   const handleModal = async () => {
     if (isLogin) {
@@ -76,6 +79,8 @@ function UI(props) {
     }
     setModalSign(false);
   };
+  var eliminaPartita = (id) =>
+    supabase.from(PARTITE_BOLGHERA).delete().eq("id", id).then();
   return (
     <>
       {props.user && (
@@ -106,6 +111,16 @@ function UI(props) {
                 </>
               }
             >
+              <Form.Field>
+                <Form.Label htmlFor="3">Campionato</Form.Label>
+                <Form.Control>
+                  <Form.Input
+                    id="3"
+                    value={camp}
+                    onChange={(e) => setCamp(e.target.value)}
+                  ></Form.Input>
+                </Form.Control>
+              </Form.Field>
               <Form.Field>
                 <Form.Label htmlFor="1">Nome Bolghera</Form.Label>
                 <Form.Control>
@@ -162,13 +177,44 @@ function UI(props) {
                 </Form.Control>
               </Form.Field>
             </CustomModal>
+            <CustomModal
+              show={modalElimina}
+              title="Elimina Partita"
+              onClose={() => setModalElimina(false)}
+              buttons={
+                <>
+                  <Button
+                    onClick={() => {
+                      eliminaPartita(daEliminare);
+                      setModalElimina(false);
+                    }}
+                    color="danger"
+                  >
+                    {"Elimina"}
+                  </Button>
+                  <Button onClick={() => setModalElimina(false)}>
+                    Annulla
+                  </Button>
+                </>
+              }
+            >
+              <div>Vuoi eliminare la partita?</div>
+            </CustomModal>
             {props.partite.map((v) => (
-              <Partita key={v.id} partita={v} autorizzato={props.autorizzato} />
+              <Partita
+                key={v.id}
+                partita={v}
+                autorizzato={props.autorizzato}
+                eliminaPartita={(id) => {
+                  setDaEliminare(id);
+                  setModalElimina(true);
+                }}
+              />
             ))}
             <Button.Group>
               {props.autorizzato && (
                 <Button onClick={() => setModalAggiunta(true)}>
-                  Aggiungi Partita
+                  Aggiungi Partita...
                 </Button>
               )}
               <Button
@@ -259,8 +305,6 @@ function Partita(props) {
       .eq("id", partita.id)
       .then();
   };
-  var eliminaPartita = () =>
-    supabase.from(PARTITE_BOLGHERA).delete().eq("id", partita.id).then();
   return (
     <Box className="partita">
       <Block
@@ -285,18 +329,27 @@ function Partita(props) {
         </Tag>
       </Block>
       <Block>
-        {setKeys.map((v) => (
-          <Set
-            key={v}
-            set={v}
-            value={partita[v]}
-            modificaSet={modificaSet}
-            autorizzato={props.autorizzato}
-          />
-        ))}
+        {setKeys
+          .filter((s, i) => {
+            if (i <= 2) return true;
+            if (setBol + setAvv >= i && Math.abs(setBol - setAvv) < i) {
+              return true;
+            }
+          })
+          .map((v) => (
+            <Set
+              key={v}
+              set={v}
+              value={partita[v]}
+              modificaSet={modificaSet}
+              autorizzato={props.autorizzato}
+            />
+          ))}
       </Block>
       {props.autorizzato && (
-        <Button onClick={eliminaPartita}>Elimina Partita</Button>
+        <Button onClick={() => props.eliminaPartita(partita.id)}>
+          Elimina Partita...
+        </Button>
       )}
     </Box>
   );
