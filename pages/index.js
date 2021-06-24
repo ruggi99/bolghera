@@ -25,6 +25,8 @@ const supabase = createClient(
 export default function Fusion() {
   var [partite, setPartite] = useState([]);
   var [autorizzati, setAutorizzati] = useState([]);
+  var [tmp, setTmp] = useState(0);
+  var forceUpdate = () => setTmp((v) => v + 1);
   useEffect(() => {
     supabase
       .from(PARTITE_BOLGHERA)
@@ -50,7 +52,14 @@ export default function Fusion() {
   }, []);
   var user = supabase.auth.user();
   var autorizzato = user && autorizzati.some((a) => a.id == user.id);
-  return <UI partite={partite} user={user} autorizzato={autorizzato} />;
+  return (
+    <UI
+      partite={partite}
+      user={user}
+      autorizzato={autorizzato}
+      forceUpdate={forceUpdate}
+    />
+  );
 }
 
 function UI(props) {
@@ -78,21 +87,67 @@ function UI(props) {
       await supabase.auth.signUp({ email: email, password: password });
     }
     setModalSign(false);
+    props.forceUpdate();
   };
   var eliminaPartita = (id) =>
     supabase.from(PARTITE_BOLGHERA).delete().eq("id", id).then();
+  var signOut = () => {
+    supabase.auth.signOut();
+    props.forceUpdate();
+  };
   return (
     <>
-      {props.user && (
-        <Hero color="success" renderAs="div">
-          <Hero.Body>
-            <Heading>Utente {props.user.email}</Heading>
-            <Heading subtitle>
-              {props.autorizzato ? "Sei" : "Non sei"} autorizzato
-            </Heading>
-          </Hero.Body>
-        </Hero>
-      )}
+      <Hero color="bolghera" gradient renderAs="div">
+        <Hero.Body>
+          {props.user && (
+            <>
+              <Heading>Utente {props.user.email}</Heading>
+              <Heading subtitle>
+                {props.autorizzato ? "Sei" : "Non sei"} autorizzato
+              </Heading>
+            </>
+          )}
+          <Button.Group>
+            {props.user ? (
+              <Button onClick={signOut} color="bolghera" inverted>
+                Log Out
+              </Button>
+            ) : (
+              <>
+                <Button
+                  onClick={() => {
+                    setModalSign(true);
+                    setIsLogin(true);
+                  }}
+                  color="bolghera"
+                  inverted
+                >
+                  Login
+                </Button>
+                <Button
+                  onClick={() => {
+                    setModalSign(true);
+                    setIsLogin(false);
+                  }}
+                  color="bolghera"
+                  inverted
+                >
+                  Iscriviti
+                </Button>
+              </>
+            )}
+            {props.autorizzato && (
+              <Button
+                onClick={() => setModalAggiunta(true)}
+                color="bolghera"
+                inverted
+              >
+                Aggiungi Partita...
+              </Button>
+            )}
+          </Button.Group>
+        </Hero.Body>
+      </Hero>
       <Section>
         <Container>
           <Content>
@@ -211,29 +266,6 @@ function UI(props) {
                 }}
               />
             ))}
-            <Button.Group>
-              {props.autorizzato && (
-                <Button onClick={() => setModalAggiunta(true)}>
-                  Aggiungi Partita...
-                </Button>
-              )}
-              <Button
-                onClick={() => {
-                  setModalSign(true);
-                  setIsLogin(true);
-                }}
-              >
-                Login
-              </Button>
-              <Button
-                onClick={() => {
-                  setModalSign(true);
-                  setIsLogin(false);
-                }}
-              >
-                Iscriviti
-              </Button>
-            </Button.Group>
           </Content>
         </Container>
       </Section>
@@ -311,22 +343,21 @@ function Partita(props) {
         display="flex"
         alignItems="center"
         textSize="3"
-        className="header"
+        className="titolo"
         flexWrap="wrap"
       >
         <Tag size="large" className="campionato">
           {partita.camp}
         </Tag>
-        <span>{partita.nomeBol}</span>
-        <span style={{ margin: "0 .25em" }}>-</span>
-        <span style={{ marginRight: "1em" }}>{partita.nomeAvv}</span>
+        <div style={{ marginRight: "1rem" }}>{partita.nomeBol}</div>
         <Tag
-          align="center"
           size="large"
           color={setBol == 3 ? "success" : setAvv == 3 ? "danger" : ""}
+          mr="4"
         >
           {setBol} - {setAvv}
         </Tag>
+        <div>{partita.nomeAvv}</div>
       </Block>
       <Block>
         {setKeys
