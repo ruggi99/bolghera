@@ -8,6 +8,7 @@ export default function CustomModal(props) {
       onClose={props.onClose}
       showClose={false}
       closeOnBlur={true}
+      className="px-3"
     >
       <Modal.Card>
         <Modal.Card.Header>
