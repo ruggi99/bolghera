@@ -388,26 +388,38 @@ function Partita(props) {
 
 function Set(props) {
   return (
-    <div>
-      <span>
+    <Block>
+      <Heading renderAs="h3" subtitle>
         Set {props.set[3]}: {props.value}
-      </span>
+      </Heading>
       {props.autorizzato && (
-        <>
-          <Button onClick={() => props.modificaSet(props.set, false, true)}>
+        <Button.Group>
+          <Button
+            size="medium"
+            onClick={() => props.modificaSet(props.set, false, true)}
+          >
             -
           </Button>
-          <Button onClick={() => props.modificaSet(props.set, true, true)}>
+          <Button
+            size="medium"
+            onClick={() => props.modificaSet(props.set, true, true)}
+          >
             +
           </Button>
-          <Button onClick={() => props.modificaSet(props.set, false, false)}>
+          <Button
+            size="medium"
+            onClick={() => props.modificaSet(props.set, false, false)}
+          >
             -
           </Button>
-          <Button onClick={() => props.modificaSet(props.set, true, false)}>
+          <Button
+            size="medium"
+            onClick={() => props.modificaSet(props.set, true, false)}
+          >
             +
           </Button>
-        </>
+        </Button.Group>
       )}
-    </div>
+    </Block>
   );
 }
