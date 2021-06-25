@@ -363,7 +363,7 @@ function Partita(props) {
         {setKeys
           .filter((s, i) => {
             if (i <= 2) return true;
-            if (setBol + setAvv >= i && Math.abs(setBol - setAvv) < i) {
+            if (Math.min(setBol, setAvv) > i - 3) {
               return true;
             }
           })
