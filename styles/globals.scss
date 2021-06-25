@@ -6,6 +6,7 @@ $custom-colors: (
 );
 
 @import "~bulma/bulma.sass";
+@import "overlay.scss";
 
 html,
 body {
