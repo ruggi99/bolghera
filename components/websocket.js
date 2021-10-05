@@ -2,15 +2,15 @@ import React, { useCallback, useEffect, useState } from "react"
 
 var waiting = false
 
-export default function useWebsocket(url) {
+export default function useWebsocket() {
     const [ws, setWs] = useState(null)
     const [data, setData] = useState(null)
     const [fake, setFake] = useState(0)
-    const onMessage = useCallback((ev) => { 
+    const onMessage = useCallback((ev) => {
         setData(JSON.parse(ev.data))
     }, [setData])
     const openWs = useCallback(() => {
-        const _ws = new WebSocket(url)
+        const _ws = new WebSocket(`ws://${location.hostname}:8500`)
         _ws.addEventListener("message", onMessage)
         _ws.addEventListener("open", () => console.log("Websocket aperto"))
         _ws.addEventListener("close", waitAndOpen)

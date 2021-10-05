@@ -3,14 +3,8 @@ import useWebsocket from "../components/websocket.js"
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
-// function Punteggio(props) {
-//     const { data, error } = useSWR("http://localhost:8000/punteggio", fetcher, {refreshInterval: 3000})
-//     console.log(data)
-//     return <UI data={data} />
-// }
-
 function Punteggio(props) {
-    const data = useWebsocket("ws://192.168.1.121:8500/")
+    const data = useWebsocket()
     console.log(data)
     return <UI data={data} />
 }
