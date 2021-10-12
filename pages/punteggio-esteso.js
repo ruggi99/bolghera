@@ -16,7 +16,7 @@ function UI(props) {
     const commento = props.data.note.Commento.split(";");
     //const score = props.data.note[`Set${props.data.note.SC0 + props.data.note.SC1 + 1}PP4`].split("-")
     return (
-        <table className="overlay">
+        <table className="punteggio punteggio-esteso">
             <thead></thead>
             <tbody>
                 <tr>

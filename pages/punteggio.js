@@ -15,7 +15,7 @@ function UI(props) {
     const elenco = props.data.elenco
     const commento = note.Commento.split(";");
     return (
-        <table className="overlay">
+        <table className="punteggio punteggio-corto">
             <thead></thead>
             <tbody>
                 <tr>
