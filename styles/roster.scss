@@ -1,0 +1,51 @@
+table.roster {
+    margin: auto;
+    background-color: rgb(255, 128, 0);
+    border-radius: 20px;
+    border: solid white 3px;
+    color : white;
+    font-size: 1.5rem;
+    overflow: hidden;
+    white-space: nowrap;
+    border-spacing: 0;
+    font-family: "Arial";
+    border-collapse: separate;
+    td {
+        padding: 2px 8px;
+        border: solid white 2px;
+        overflow:hidden;
+        &:nth-child(2n) {
+            max-width: 300px;
+            width: 300px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+        &:nth-child(2n + 1) {
+            text-align: right;
+        }
+        &:first-child {
+          border-left: none;
+        }
+        &:last-child {
+          border-right: none;
+        }
+    }
+    th {
+        color: white;
+        text-align: center;
+        border: solid white 2px;
+        &:first-child {
+          border-left: none;
+        }
+        &:last-child {
+          border-right: none;
+        }
+    }
+    tr:first-child th {
+      border-top: none;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+}
