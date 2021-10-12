@@ -9,7 +9,7 @@ body {
   margin: 0;
 }
 
-table.overlay {
+table.punteggio {
   white-space: nowrap;
   border-spacing: 0;
   font-family: "Arial";
@@ -19,7 +19,6 @@ table.overlay {
   border-radius: 10px;
   overflow: hidden;
   font-size: 30px;
-  margin: 30px 0 0 40px;
   color: white;
   background-color: rgba(255, 128, 0, 1);
   td {
@@ -29,6 +28,7 @@ table.overlay {
     border: 2px solid white;
     &:nth-child(-n + 2) {
       font-weight: bold;
+      background-color: rgba(0, 0, 0, 0.1);
     }
     &:first-child {
       border-left: none;
@@ -37,7 +37,7 @@ table.overlay {
       border-right: none;
     }
     img {
-      margin-bottom:-3px;
+      margin-bottom: -3px;
     }
   }
   tr:first-child td {
@@ -46,4 +46,8 @@ table.overlay {
   tr:last-child td {
     border-bottom: none;
   }
+}
+
+table.punteggio-corto {
+  margin: 30px 0 0 40px;
 }
