@@ -22,9 +22,13 @@ function UI(props) {
         </tr>
       </thead>
       <tbody>
-        <tr><td colSpan="4">&nbsp;</td></tr>
+        <tr>
+          <td colSpan="4">&nbsp;</td>
+        </tr>
         <Giocatori elenco={elenco} />
-        <tr><td colSpan="4">&nbsp;</td></tr>
+        <tr>
+          <td colSpan="4">&nbsp;</td>
+        </tr>
         <Staff note={note} />
       </tbody>
     </table>
@@ -65,8 +69,18 @@ function Giocatori({ elenco }) {
 function Staff({ note }) {
   return (
     <>
-          <tr><td>1° ALL</td><td>{note.AlleIn}</td><td>1° ALL</td><td>{note.AlleOs}</td></tr>
-          <tr><td>2° ALL</td><td>{note.AssIn}</td><td>2° ALL</td><td>{note.AssOs}</td></tr>
+      <tr>
+        <td>1° All</td>
+        <td>{note.AlleIn}</td>
+        <td>1° All</td>
+        <td>{note.AlleOs}</td>
+      </tr>
+      <tr>
+        <td>2° All</td>
+        <td>{note.AssIn}</td>
+        <td>2° All</td>
+        <td>{note.AssOs}</td>
+      </tr>
     </>
   );
 }
