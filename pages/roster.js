@@ -11,14 +11,13 @@ function UI(props) {
   if (!props.data || !props.data.elenco || !props.data.note) return null;
   const note = props.data.note;
   const elenco = props.data.elenco;
-  const commento = note.Commento.split(";");
-  const last_points = props.data.last_points;
+  const commento = note.Commento ? note.Commento.split(";") : [];
   return (
     <table className="roster">
       <thead>
         <tr>
-          <th colSpan="2">{note.SqInDesC}</th>
-          <th colSpan="2">{note.SqOsDesC}</th>
+          <th colSpan="2">{commento[2] != "no comments" && commento[2] || note.SqInDesC}</th>
+          <th colSpan="2">{commento[3] != "no comments" && commento[3] || note.SqOsDesC}</th>
         </tr>
       </thead>
       <tbody>
@@ -48,7 +47,7 @@ function Giocatori({ elenco }) {
           {_casa ? (
             <>
               <td>{_casa.Pet}</td>
-              <td>{_casa.Cognome + " " + _casa.Nome[0] + "."}</td>
+              <td>{capitalize(_casa.Cognome) + " " + _casa.Nome[0].toUpperCase() + "."}</td>
             </>
           ) : (
             <td colSpan="2"></td>
@@ -56,7 +55,7 @@ function Giocatori({ elenco }) {
           {_ospite ? (
             <>
               <td>{_ospite.Pet}</td>
-              <td>{_ospite.Cognome + " " + _ospite.Nome[0] + "."}</td>
+              <td>{capitalize(_ospite.Cognome) + " " + _ospite.Nome[0].toUpperCase() + "."}</td>
             </>
           ) : (
             <td colSpan="2"></td>
@@ -71,18 +70,25 @@ function Staff({ note }) {
     <>
       <tr>
         <td>1° All</td>
-        <td>{note.AlleIn}</td>
+        <td>{capitalize(note.AlleIn)}</td>
         <td>1° All</td>
-        <td>{note.AlleOs}</td>
+        <td>{capitalize(note.AlleOs)}</td>
       </tr>
       <tr>
         <td>2° All</td>
-        <td>{note.AssIn}</td>
+        <td>{capitalize(note.AssIn)}</td>
         <td>2° All</td>
-        <td>{note.AssOs}</td>
+        <td>{capitalize(note.AssOs)}</td>
       </tr>
     </>
   );
+}
+
+function capitalize(str) {
+  if (str.indexOf(' ') == -1) return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  str = str.split(' ');
+  str = str.map((val) => capitalize(val));
+  return str.join(' ');
 }
 
 export default Roster;
