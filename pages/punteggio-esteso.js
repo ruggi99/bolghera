@@ -1,9 +1,7 @@
 import React from "react";
 import useWebsocket from "../components/websocket.js";
 
-const fetcher = (url) => fetch(url).then((res) => res.json());
-
-function Punteggio(props) {
+function Punteggio() {
   const data = useWebsocket();
   console.log(data);
   return <UI data={data} />;
@@ -79,6 +77,7 @@ function RigaAvversari(props) {
 
 function UI(props) {
   if (!props.data) return null;
+  const note = props.data.note;
   const commento = note.Commento?.split(";") || [];
   return (
     <table className="punteggio punteggio-esteso">
