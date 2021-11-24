@@ -3,16 +3,16 @@ import useWebsocket from "../components/websocket.js";
 
 function Punteggio() {
   const data = useWebsocket();
+  const data2 = parseComment(data);
   console.log(data);
-  return <UI data={data} />;
+  console.log(data2);
+  return <UI data={data} {...data2} />;
 }
 
 function RigaBolghera(props) {
-  const note = props.data.note;
-  const commento = note.Commento?.split(";") || [];
   return (
     <tr>
-      <td>{(commento[2] != "no comments" && commento[2]) || note.SqInDesC}</td>
+      <td>{props.nomeCasa}</td>
       <td>{note.SE0 || 0}</td>
       <td>{note.PT0 || 0}</td>
       <td>{note.FB ? null : <Ball />}</td>
@@ -21,11 +21,9 @@ function RigaBolghera(props) {
 }
 
 function RigaAvversari(props) {
-  const note = props.data.note;
-  const commento = note.Commento?.split(";") || [];
   return (
     <tr>
-      <td>{(commento[3] != "no comments" && commento[3]) || note.SqOsDesC}</td>
+      <td>{props.nomeOspiti}</td>
       <td>{note.SE1 || 0}</td>
       <td>{note.PT1 || 0}</td>
       <td>{note.FB ? <Ball /> : null}</td>
@@ -34,7 +32,7 @@ function RigaAvversari(props) {
 }
 
 function UI(props) {
-  if (!props.data || !props.data.elenco || !props.data.note) return null;
+  if (!props.data || !props.data.note) return null;
   const note = props.data.note;
   const commento = note.Commento?.split(";") || [];
   return (
