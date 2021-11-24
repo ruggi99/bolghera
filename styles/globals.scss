@@ -8,11 +8,14 @@ $custom-colors: (
 @import "~bulma/bulma.sass";
 @import "punteggio.scss";
 @import "roster.scss";
+@import "sestetto.scss";
 
 html,
 body {
   padding: 0;
   margin: 0;
+  height: 100%;
+  width: 100%;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
@@ -33,4 +36,13 @@ a {
   .tag {
     font-weight: bold;
   }
+}
+
+@font-face {
+  font-family: Montserrat;
+  src: url("Montserrat-SemiBold.ttf");
+}
+
+#__next {
+  height: 100%;
 }
