@@ -77,8 +77,15 @@
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
-  &.pall {
-    background-color: rgba(255, 255, 255, 0.3);
+  position: relative;
+  &.pall::before {
+    content: "(P)";
+    position: absolute;
+    top: 43%;
+    right: 5px;
+  }
+  &.kappa .numero {
+    text-decoration: underline;
   }
   .numero {
     font-size: 60px;
@@ -102,6 +109,15 @@
 }
 
 .libero {
+  white-space: nowrap;
+  overflow: hidden;
+  position: relative;
+  &::before {
+    content: "(L)";
+    position: absolute;
+    top: 43%;
+    right: 5px;
+  }
   .numero {
     color: white;
     font-size: 50px;

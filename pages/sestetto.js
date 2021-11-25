@@ -85,6 +85,9 @@ function Persona(props) {
   if (NPall == props.n) {
     classes.push("pall");
   }
+  if (giocatore.Id == "C") {
+    classes.push("kappa");
+  }
   return (
     <div className={classes.join(" ")}>
       <div className="numero">{giocatore.Pet}</div>
