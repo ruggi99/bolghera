@@ -32,6 +32,18 @@ function UI(props) {
         <div className="nome-squadra">{note.SqOsDesC}</div>
         <Quadrato {...props} />
       </div>
+      <div className="riserve">
+        <div style={{ marginLeft: "30px", width: "400px" }}>
+          <Riserve {...props} bolghera />
+        </div>
+        <div style={{ marginRight: "30px", width: "120px" }}>
+        </div>
+        <div style={{ marginLeft: "30px", width: "120px" }}>
+        </div>
+        <div style={{ marginRight: "30px", width:"400px"}}>
+          <Riserve {...props} />
+        </div>
+      </div>
     </div>
   );
 }
@@ -131,6 +143,34 @@ function Libero(props) {
       <div className="cognome">{capitalize(giocatore.Cognome)}</div>
     </div>
   );
+}
+
+function Riserve(props) {
+  const giocatori = props.data.elenco.filter((p) => p.CodSq == (props.bolghera ? "0" : "1")).filter((p) => calc_riserva(p, props))
+  const cognomi = giocatori.map((p) => capitalize(p.Cognome) + calc_cognome(p))
+  return <div className="riserve-q">A disposizione: {cognomi.join(", ") }.</div>
+}
+
+function calc_riserva(giocatore, props) {
+  if (props.bolghera) {
+    if (giocatore.Pet == props.liberoCasa) {
+      return false
+    }
+  } else {
+    if (giocatore.Pet == props.liberoOspiti) {
+      return false
+    }
+  }
+  const set = props.data.note.SetAgg
+  const set2 = giocatore["S" + set]
+  return !set2 || !parseInt(set2)
+}
+
+function calc_cognome(giocatore) {
+  var res = ""
+  if (giocatore.Id == "C") res += " (K)"
+  if (giocatore.Id == "L") res += " (L)"
+  return res
 }
 
 function capitalize(str) {

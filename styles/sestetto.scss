@@ -126,3 +126,21 @@
     font-size: 18px;
   }
 }
+
+.riserve {
+  position: absolute;
+  width: 100%;
+  height: 120px;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  overflow: hidden;
+  align-items: top;
+  justify-content: space-around;
+  .riserve-q {
+    border-radius: 10px;
+    padding: 10px;
+    color: white;
+    text-align: justify;
+  }
+}
