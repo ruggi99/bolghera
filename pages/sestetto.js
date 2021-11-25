@@ -4,7 +4,21 @@ import parseComment from "../components/parseComment.js";
 
 function Sestetto(props) {
   const data = useWebsocket();
+  if (!data) return null;
   const data2 = parseComment(data);
+  var { liberoCasa, liberoOspiti } = data2;
+  if (!liberoCasa) {
+    liberoCasa = data.elenco.filter(
+      (p) => p.CodSq == "0" && p.IDRuolo == "1"
+    )[0].Pet;
+  }
+  if (!liberoOspiti) {
+    liberoOspiti = data.elenco.filter(
+      (p) => p.CodSq == "1" && p.IDRuolo == "1"
+    )[0].Pet;
+  }
+  data2["liberoCasa"] = liberoCasa;
+  data2["liberoOspiti"] = liberoOspiti;
   console.log(data);
   console.log(data2);
   return <UI data={data} {...data2} />;
@@ -13,7 +27,6 @@ function Sestetto(props) {
 function UI(props) {
   if (!props.data || !props.data.elenco || !props.data.note) return null;
   const note = props.data.note;
-  const commento = note.Commento?.split(";") || [];
   return (
     <div className="sestetto">
       <div style={{ marginLeft: "30px" }}>
@@ -36,11 +49,9 @@ function UI(props) {
         <div style={{ marginLeft: "30px", width: "400px" }}>
           <Riserve {...props} bolghera />
         </div>
-        <div style={{ marginRight: "30px", width: "120px" }}>
-        </div>
-        <div style={{ marginLeft: "30px", width: "120px" }}>
-        </div>
-        <div style={{ marginRight: "30px", width:"400px"}}>
+        <div style={{ marginRight: "30px", width: "120px" }}></div>
+        <div style={{ marginLeft: "30px", width: "120px" }}></div>
+        <div style={{ marginRight: "30px", width: "400px" }}>
           <Riserve {...props} />
         </div>
       </div>
@@ -123,18 +134,14 @@ function Allenatore(props) {
 function Libero(props) {
   const { bolghera, data } = props;
   var giocatore;
-  if (bolghera && props.liberoCasa) {
+  if (bolghera) {
     giocatore = data.elenco
-      .filter((p) => p.CodSq == (bolghera ? "0" : "1"))
+      .filter((p) => p.CodSq == "0")
       .find((p) => p.Pet == props.liberoCasa);
-  } else if (!bolghera && props.liberoOspiti) {
-    giocatore = data.elenco
-      .filter((p) => p.CodSq == (bolghera ? "0" : "1"))
-      .find((p) => p.Pet == props.liberoOspiti);
   } else {
     giocatore = data.elenco
-      .filter((p) => p.CodSq == (bolghera ? "0" : "1"))
-      .find((p) => p.IDRuolo == "1");
+      .filter((p) => p.CodSq == "1")
+      .find((p) => p.Pet == props.liberoOspiti);
   }
   if (!giocatore) return null;
   return (
@@ -146,31 +153,33 @@ function Libero(props) {
 }
 
 function Riserve(props) {
-  const giocatori = props.data.elenco.filter((p) => p.CodSq == (props.bolghera ? "0" : "1")).filter((p) => calc_riserva(p, props))
-  const cognomi = giocatori.map((p) => capitalize(p.Cognome) + calc_cognome(p))
-  return <div className="riserve-q">A disposizione: {cognomi.join(", ") }.</div>
+  const giocatori = props.data.elenco
+    .filter((p) => p.CodSq == (props.bolghera ? "0" : "1"))
+    .filter((p) => calc_riserva(p, props));
+  const cognomi = giocatori.map((p) => capitalize(p.Cognome) + calc_cognome(p));
+  return <div className="riserve-q">A disposizione: {cognomi.join(", ")}.</div>;
 }
 
 function calc_riserva(giocatore, props) {
   if (props.bolghera) {
     if (giocatore.Pet == props.liberoCasa) {
-      return false
+      return false;
     }
   } else {
     if (giocatore.Pet == props.liberoOspiti) {
-      return false
+      return false;
     }
   }
-  const set = props.data.note.SetAgg
-  const set2 = giocatore["S" + set]
-  return !set2 || !parseInt(set2)
+  const set = props.data.note.SetAgg;
+  const set2 = giocatore["S" + set];
+  return !set2 || !parseInt(set2);
 }
 
 function calc_cognome(giocatore) {
-  var res = ""
-  if (giocatore.Id == "C") res += " (K)"
-  if (giocatore.Id == "L") res += " (L)"
-  return res
+  var res = "";
+  if (giocatore.Id == "C") res += " (K)";
+  if (giocatore.Id == "L") res += " (L)";
+  return res;
 }
 
 function capitalize(str) {
