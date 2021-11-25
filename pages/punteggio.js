@@ -1,5 +1,6 @@
 import React from "react";
 import useWebsocket from "../components/websocket.js";
+import parseComment from "../components/parseComment.js";
 
 function Punteggio() {
   const data = useWebsocket();
@@ -10,6 +11,7 @@ function Punteggio() {
 }
 
 function RigaBolghera(props) {
+  const note = props.data.note;
   return (
     <tr>
       <td>{props.nomeCasa}</td>
@@ -21,6 +23,7 @@ function RigaBolghera(props) {
 }
 
 function RigaAvversari(props) {
+  const note = props.data.note;
   return (
     <tr>
       <td>{props.nomeOspiti}</td>
