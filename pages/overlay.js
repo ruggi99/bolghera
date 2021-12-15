@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
+import { useRouter } from "next/router";
 
 const PARTITE_BOLGHERA = "partite_bolghera";
 
@@ -47,29 +48,42 @@ function reduceSetCorto(obj, keys, bol) {
 }
 
 export default function Fusion() {
+  const router = useRouter();
   var [partita, setPartita] = useState({});
   var [tmp, setTmp] = useState(0); // Force update
   var forceUpdate = () => setTmp((v) => v + 1);
   useEffect(() => {
-    supabase
-      .from(PARTITE_BOLGHERA)
-      .select("*")
-      .order("id", { ascending: false })
-      .single()
-      .then((r) => setPartita(r.data));
-    supabase
-      .from(PARTITE_BOLGHERA)
-      .on("UPDATE", (r) => setPartita(r.new))
-      .subscribe();
-  }, []);
+    async function fetchData() {
+      if (!router.isReady) return;
+      const { id } = router.query;
+      if (id && isNaN(parseInt(id))) {
+        console.error("Id non compatibile");
+        return;
+      }
+      const table = supabase
+        .from(PARTITE_BOLGHERA)
+        .select("*")
+        .order("id", { ascending: false });
+      if (id) {
+        table.eq("id", id);
+      }
+      const partita = await table
+        .limit(1)
+        .single()
+        .then((r) => (setPartita(r.data), r.data));
+      supabase
+        .from(`${PARTITE_BOLGHERA}:id=eq.${partita.id}`)
+        .on("UPDATE", (r) => setPartita(r.new))
+        .subscribe();
+    }
+    fetchData();
+  }, [router.isReady]);
   partita = { ...partita };
-  console.log("parita.setBol:", partita.setBol);
   const setKeys = Object.keys(partita).filter((k) => k.startsWith("set"));
   const set1Bol = reduceSetNormale(partita, setKeys.slice(0, 4), true);
   const set2Bol = reduceSetCorto(partita, setKeys.slice(4, 5), true);
   const set1Avv = reduceSetNormale(partita, setKeys.slice(0, 4), false);
   const set2Avv = reduceSetCorto(partita, setKeys.slice(4, 5), false);
-  console.log("setKeys:", setKeys);
   partita.setKeys = setKeys;
   partita.setBol = set1Bol + set2Bol;
   partita.setAvv = set1Avv + set2Avv;
@@ -96,13 +110,11 @@ function UI(props) {
 
 function getLastPoints(obj, bol) {
   const lastKey = obj.setKeys[obj.setBol + obj.setAvv];
-  console.log(obj.setKeys, lastKey);
   if (!lastKey) return "0";
   return obj[lastKey].split("-")[bol ? 0 : 1];
 }
 
 function Set(props) {
-  console.log("setKeys2:", props.partita.setKeys);
   const set = props.bol ? props.partita.setBol : props.partita.setAvv;
   return (
     <>
