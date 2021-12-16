@@ -92,7 +92,7 @@ export default function Fusion() {
 
 function UI(props) {
   return (
-    <table className="overlay">
+    <table className="punteggio punteggio-corto femm">
       <thead></thead>
       <tbody>
         <tr>
