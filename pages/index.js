@@ -51,7 +51,8 @@ export default function Fusion() {
       .subscribe();
   }, []);
   var user = supabase.auth.user();
-  var autorizzato = user && autorizzati.some((a) => a.id == user.id);
+  var autorizzato =
+    user && autorizzati.some((a) => a.id == user.id && a.autorizzato);
   return (
     <UI
       partite={partite}
