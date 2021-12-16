@@ -92,7 +92,11 @@ export default function Fusion() {
 
 function UI(props) {
   return (
-    <table className="punteggio punteggio-corto femm">
+    <table
+      className={`punteggio punteggio-corto femm ${calc_set_match_point(
+        props
+      )}`}
+    >
       <thead></thead>
       <tbody>
         <tr>
@@ -122,4 +126,38 @@ function Set(props) {
       <td>{getLastPoints(props.partita, props.bol)}</td>
     </>
   );
+}
+
+function calc_set_match_point(props) {
+  const { partita } = props;
+  if (!partita.set1) return "";
+  const pointsCurrentSetBol = getLastPoints(partita, true);
+  const pointsCurrentSetAvv = getLastPoints(partita, false);
+  const currentSet = partita.setBol + partita.setAvv + 1;
+
+  const isSetPointCasa =
+    pointsCurrentSetBol - pointsCurrentSetAvv >= 1 &&
+    pointsCurrentSetBol >= (currentSet != 5 ? 24 : 14);
+  const isMatchPointCasa = isSetPointCasa && partita.setBol == 2;
+
+  const isSetPointOspiti =
+    pointsCurrentSetAvv - pointsCurrentSetBol >= 1 &&
+    pointsCurrentSetAvv >= (currentSet != 5 ? 24 : 14);
+  const isMatchPointOspiti = isSetPointOspiti && partita.setAvv == 2;
+
+  const classes = [];
+  if (isMatchPointCasa || isMatchPointOspiti) {
+    classes.push("matchpoint");
+  } else if (isSetPointCasa || isSetPointOspiti) {
+    classes.push("setpoint");
+  }
+
+  if (isMatchPointCasa || isSetPointCasa) {
+    classes.push("sopra");
+  }
+  if (isMatchPointOspiti || isSetPointOspiti) {
+    classes.push("sotto");
+  }
+
+  return classes.join(" ");
 }

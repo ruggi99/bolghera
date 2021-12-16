@@ -57,57 +57,53 @@ table.punteggio-corto {
   }
   background-color: var(--back-color);
   border: 4px solid white;
-  &.sopra {
-    &::before {
-      position: absolute;
-      left: calc(100% - 5px);
-      border: 4px solid white;
-      padding: 0 10px 0 15px;
-      top: -4px;
-      z-index: -1;
-      font-size: 26px;
-      border-top-right-radius: 10px;
-      border-bottom-right-radius: 10px;
-    }
-    &.matchpoint::before {
-      content: "MATCH POINT";
-    }
-    &.setpoint::before {
-      content: "SET POINT";
-    }
-  }
-  &.sotto {
-    &::after {
-      position: absolute;
-      left: calc(100% - 5px);
-      border: 4px solid white;
-      padding: 0 10px 0 15px;
-      bottom: -4px;
-      z-index: -1;
-      font-size: 26px;
-      border-top-right-radius: 10px;
-      border-bottom-right-radius: 10px;
-    }
-    &.matchpoint::after {
-      content: "MATCH POINT";
-    }
-    &.setpoint::after {
-      content: "SET POINT";
-    }
-  }
 
   &::after,
   &::before {
     transition: 0.5s;
     background-color: var(--back-color);
+    position: absolute;
+    left: calc(100% - 5px);
+    border: 4px solid white;
+    padding: 0 10px 0 15px;
+    z-index: -1;
+    font-size: 26px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    opacity: 0;
+  }
+  &::before {
+    top: -4px;
+  }
+  &::after {
+    bottom: -4px;
+  }
+  &.matchpoint::before,
+  &.matchpoint::after {
+    content: "MATCH POINT";
+  }
+  &.setpoint::before,
+  &.setpoint::after {
+    content: "SET POINT";
+  }
+  &.sopra::before,
+  &.sotto::after {
+    opacity: 1;
   }
 }
 
 table.punteggio-esteso {
   margin: auto;
   background-color: transparent;
-  border: 4px solid rgba(238, 85, 46, 1);
+  &.femm {
+    --border-color: rgba(255, 0, 255, 1);
+  }
+  &.masc {
+    --border-color: rgba(255, 128, 0, 1);
+  }
+  border: 4px solid;
+  border-color: var(--border-color);
   td {
-    border-color: rgba(238, 85, 46, 1);
+    border-color: var(--border-color);
   }
 }
