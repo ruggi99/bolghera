@@ -362,7 +362,11 @@ function Partita(props) {
       <Block>
         {setKeys
           .filter((s, i) => {
-            if (Math.min(setBol, setAvv) > i - 3) {
+            var totalSet = setBol + setAvv;
+            if (setBol == 3 || setAvv == 3) {
+              totalSet--;
+            }
+            if (i <= totalSet) {
               return true;
             }
           })
