@@ -39,7 +39,7 @@ function UI(props) {
   const note = props.data.note;
   const commento = note.Commento?.split(";") || [];
   return (
-    <table className="punteggio punteggio-corto">
+    <table className="punteggio punteggio-corto masc">
       <thead></thead>
       <tbody>
         {commento[0] ? (
