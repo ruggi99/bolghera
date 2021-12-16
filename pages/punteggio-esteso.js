@@ -1,10 +1,12 @@
 import React from "react";
 import useWebsocket from "../components/websocket.js";
+import parseComment from "../components/parseComment.js";
 
 function Punteggio() {
   const data = useWebsocket();
+  const data2 = parseComment(data);
   console.log(data);
-  return <UI data={data} />;
+  return <UI data={data} {...data2} />;
 }
 
 function RigaBolghera(props) {
