@@ -1,6 +1,7 @@
 export default function parseComment(data) {
   if (!data) return null;
   const commento = data.note.Commento.split(";");
+  const inverti = commento[0] && commento[0] != "no comments";
   var nomeCasa, nomeOspiti;
   var liberoCasa, liberoOspiti;
   if (commento[2] && commento[2] != "no comments") {
@@ -17,5 +18,5 @@ export default function parseComment(data) {
   } else {
     nomeOspiti = data.note.SqOsDesC;
   }
-  return { nomeCasa, nomeOspiti, liberoCasa, liberoOspiti };
+  return { nomeCasa, nomeOspiti, liberoCasa, liberoOspiti, inverti };
 }

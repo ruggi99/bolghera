@@ -37,7 +37,6 @@ function RigaAvversari(props) {
 function UI(props) {
   if (!props.data || !props.data.note) return null;
   const note = props.data.note;
-  const commento = note.Commento?.split(";") || [];
   return (
     <table
       className={`punteggio punteggio-corto masc ${calc_set_match_point(
@@ -46,7 +45,7 @@ function UI(props) {
     >
       <thead></thead>
       <tbody>
-        {commento[0] ? (
+        {props.inverti ? (
           <>
             <RigaAvversari {...props} />
             <RigaBolghera {...props} />
