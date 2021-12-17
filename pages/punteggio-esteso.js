@@ -11,7 +11,6 @@ function Punteggio() {
 
 function RigaBolghera(props) {
   const note = props.data.note;
-  const commento = note.Commento?.split(";") || [];
   return (
     <tr>
       <td>{props.nomeCasa}</td>
@@ -42,7 +41,6 @@ function RigaBolghera(props) {
 
 function RigaAvversari(props) {
   const note = props.data.note;
-  const commento = note.Commento?.split(";") || [];
   return (
     <tr>
       <td>{props.nomeOspiti}</td>
