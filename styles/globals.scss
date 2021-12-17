@@ -13,6 +13,13 @@ $custom-colors: (
 @font-face {
   font-family: Montserrat;
   src: url("Montserrat-SemiBold.ttf");
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: Montserrat;
+  src: url("Montserrat-Light.ttf");
+  font-weight: 300;
 }
 
 html,
