@@ -359,6 +359,11 @@ function Partita(props) {
           {setBol} - {setAvv}
         </Tag>
         <div>{partita.nomeAvv}</div>
+        {props.autorizzato && (
+          <Tag size="small" id="id">
+            Id: {partita.id}
+          </Tag>
+        )}
       </Block>
       <Block>
         {setKeys
