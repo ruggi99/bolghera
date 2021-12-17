@@ -14,10 +14,7 @@ function RigaBolghera(props) {
   const commento = note.Commento?.split(";") || [];
   return (
     <tr>
-      <td>
-        {(commento[2] != "no comments" && commento[2]) ||
-          props.data.note.SqInDesC}
-      </td>
+      <td>{props.nomeCasa}</td>
       <td>{props.data.note.SE0 || 0}</td>
       {Array(5)
         .fill()
@@ -48,10 +45,7 @@ function RigaAvversari(props) {
   const commento = note.Commento?.split(";") || [];
   return (
     <tr>
-      <td>
-        {(commento[3] != "no comments" && commento[3]) ||
-          props.data.note.SqOsDesC}
-      </td>
+      <td>{props.nomeOspiti}</td>
       <td>{props.data.note.SE1 || 0}</td>
       {Array(5)
         .fill()
@@ -85,7 +79,7 @@ function UI(props) {
     <table className="punteggio punteggio-esteso masc">
       <thead></thead>
       <tbody>
-        {commento[0] ? (
+        {props.inverti ? (
           <>
             <RigaAvversari {...props} />
             <RigaBolghera {...props} />
