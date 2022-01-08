@@ -71,6 +71,7 @@ table.punteggio-corto {
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
     opacity: 0;
+    content: "";
   }
   &::before {
     top: -4px;
@@ -89,6 +90,7 @@ table.punteggio-corto {
   &.sopra::before,
   &.sotto::after {
     opacity: 1;
+    animation: hide 0.5s 5s 1 forwards;
   }
 }
 
@@ -105,5 +107,14 @@ table.punteggio-esteso {
   border-color: var(--border-color);
   td {
     border-color: var(--border-color);
+  }
+}
+
+@keyframes hide {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
   }
 }
