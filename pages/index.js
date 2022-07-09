@@ -23,20 +23,26 @@ const supabase = createClient(
 );
 
 export default function Fusion() {
-  var [partite, setPartite] = useState([]);
-  var [autorizzati, setAutorizzati] = useState([]);
-  var [tmp, setTmp] = useState(0);
-  var forceUpdate = () => setTmp((v) => v + 1);
+  const [partite, setPartite] = useState([]);
+  const [autorizzato, setAutorizzato] = useState(false);
+  const [tmp, setTmp] = useState(0);
+  const forceUpdate = () => setTmp((v) => v + 1);
+  const user = supabase.auth.user();
+  useEffect(() => console.log("user", user), [user]);
   useEffect(() => {
     supabase
       .from(PARTITE_BOLGHERA)
       .select("*")
       .order("id", { ascending: false })
       .then((r) => setPartite(r.data));
-    supabase
-      .from(AUTORIZZATI)
-      .select("*")
-      .then((r) => setAutorizzati(r.data));
+    if (user)
+      supabase
+        .from(AUTORIZZATI)
+        .select("*")
+        .single()
+        .then((r) => setAutorizzato(r.data.autorizzato));
+  }, [user]);
+  useEffect(() => {
     supabase
       .from(PARTITE_BOLGHERA)
       .on("INSERT", (r) =>
@@ -50,9 +56,6 @@ export default function Fusion() {
       .on("DELETE", (r) => setPartite((s) => s.filter((v) => v.id != r.old.id)))
       .subscribe();
   }, []);
-  var user = supabase.auth.user();
-  var autorizzato =
-    user && autorizzati.some((a) => a.id == user.id && a.autorizzato);
   return (
     <UI
       partite={partite}
