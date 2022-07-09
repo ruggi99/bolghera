@@ -42,6 +42,7 @@ export default function Fusion() {
       )
       .on("DELETE", (r) => setPartite((s) => s.filter((v) => v.id != r.old.id)))
       .subscribe();
+    supabase.auth.onAuthStateChange(() => forceUpdate());
   }, []);
   useEffect(() => {
     if (user) {
