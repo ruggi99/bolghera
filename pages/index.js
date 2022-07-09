@@ -15,6 +15,7 @@ import {
 
 import CustomModal from "components/CustomModal";
 import { AUTORIZZATI, PARTITE_BOLGHERA } from "lib/const";
+import { reduceSetCorto, reduceSetNormale } from "lib/helpers";
 import supabase from "lib/supabaseClient";
 
 export default function Fusion() {
@@ -294,46 +295,6 @@ function ModalElimina({ daEliminare, onClose, show }) {
       <div>Vuoi eliminare la partita?</div>
     </CustomModal>
   );
-}
-
-function reduceSetNormale(obj, keys, bol) {
-  return keys.reduce((a, v) => {
-    var punti = obj[v].split("-");
-    var punti1, punti2;
-    if (bol) {
-      punti1 = punti[0];
-      punti2 = punti[1];
-    } else {
-      punti1 = punti[1];
-      punti2 = punti[0];
-    }
-    punti1 = parseInt(punti1);
-    punti2 = parseInt(punti2);
-    if (punti1 < 25 || punti1 - punti2 < 2) {
-      return a;
-    }
-    return a + 1;
-  }, 0);
-}
-
-function reduceSetCorto(obj, keys, bol) {
-  return keys.reduce((a, v) => {
-    var punti = obj[v].split("-");
-    var punti1, punti2;
-    if (bol) {
-      punti1 = punti[0];
-      punti2 = punti[1];
-    } else {
-      punti1 = punti[1];
-      punti2 = punti[0];
-    }
-    punti1 = parseInt(punti1);
-    punti2 = parseInt(punti2);
-    if (punti1 < 15 || punti1 - punti2 < 2) {
-      return a;
-    }
-    return a + 1;
-  }, 0);
 }
 
 function Partita(props) {
