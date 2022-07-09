@@ -1,6 +1,60 @@
 {
-  "extends": ["next", "next/core-web-vitals"],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es2022": true,
+    "node": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:react/jsx-runtime",
+    "plugin:react-hooks/recommended",
+    "prettier"
+  ],
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 13,
+    "sourceType": "module"
+  },
+  "overrides": [
+    {
+      "files": ["*.js", "*.jsx"]
+    }
+  ],
+  "plugins": ["simple-import-sort", "sort-destructure-keys"],
   "rules": {
-    "@next/next/no-img-element": "off"
+    "react/prop-types": "off",
+    "react/self-closing-comp": "error",
+    "react/jsx-no-useless-fragment": "error",
+    "react/jsx-curly-brace-presence": ["error", "never"],
+    "react/jsx-fragments": "error",
+    "react/function-component-definition": [
+      2,
+      { "namedComponents": "function-declaration" }
+    ],
+    "react/display-name": ["error"],
+    "react-hooks/exhaustive-deps": "error",
+    "simple-import-sort/imports": [
+      "error",
+      {
+        "groups": [
+          ["^react$"],
+          ["^\\u0000"],
+          ["^@?\\w"],
+          ["^components", "^hooks", "^lib", "^public"],
+          ["^"]
+        ]
+      }
+    ],
+    "simple-import-sort/exports": "error",
+    "sort-destructure-keys/sort-destructure-keys": "error"
   }
 }
