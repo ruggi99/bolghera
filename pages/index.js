@@ -35,12 +35,15 @@ export default function Fusion() {
       .select("*")
       .order("id", { ascending: false })
       .then((r) => setPartite(r.data));
-    if (user)
+    if (user) {
       supabase
         .from(AUTORIZZATI)
         .select("*")
         .single()
         .then((r) => setAutorizzato(r.data.autorizzato));
+    } else {
+      setAutorizzato(false);
+    }
   }, [user]);
   useEffect(() => {
     supabase
