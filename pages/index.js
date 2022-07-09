@@ -1,51 +1,34 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+
 import {
-  Section,
+  Block,
+  Box,
+  Button,
   Container,
   Content,
-  Box,
-  Tag,
-  Block,
-  Button,
   Form,
-  Hero,
   Heading,
+  Hero,
+  Section,
+  Tag,
 } from "react-bulma-components";
-import { createClient } from "@supabase/supabase-js";
-import CustomModal from "../components/CustomModal";
 
-const PARTITE_BOLGHERA = "partite_bolghera";
-const AUTORIZZATI = "autorizzati";
-
-const supabase = createClient(
-  "https://ytazfaaqthtbogrdthjf.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYyMzMyODQ2MywiZXhwIjoxOTM4OTA0NDYzfQ.qERtQfqDfQF7_ekIPvmfa7YBXswXGOEfQCz0qcUQOp8"
-);
+import CustomModal from "components/CustomModal";
+import { AUTORIZZATI, PARTITE_BOLGHERA } from "lib/const";
+import supabase from "lib/supabaseClient";
 
 export default function Fusion() {
   const [partite, setPartite] = useState([]);
   const [autorizzato, setAutorizzato] = useState(false);
-  const [tmp, setTmp] = useState(0);
+  const [, setTmp] = useState(0);
   const forceUpdate = () => setTmp((v) => v + 1);
   const user = supabase.auth.user();
-  useEffect(() => console.log("user", user), [user]);
   useEffect(() => {
     supabase
       .from(PARTITE_BOLGHERA)
       .select("*")
       .order("id", { ascending: false })
       .then((r) => setPartite(r.data));
-    if (user) {
-      supabase
-        .from(AUTORIZZATI)
-        .select("*")
-        .single()
-        .then((r) => setAutorizzato(r.data.autorizzato));
-    } else {
-      setAutorizzato(false);
-    }
-  }, [user]);
-  useEffect(() => {
     supabase
       .from(PARTITE_BOLGHERA)
       .on("INSERT", (r) =>
@@ -59,6 +42,17 @@ export default function Fusion() {
       .on("DELETE", (r) => setPartite((s) => s.filter((v) => v.id != r.old.id)))
       .subscribe();
   }, []);
+  useEffect(() => {
+    if (user) {
+      supabase
+        .from(AUTORIZZATI)
+        .select("*")
+        .single()
+        .then((r) => setAutorizzato(r.data.autorizzato));
+    } else {
+      setAutorizzato(false);
+    }
+  }, [user]);
   return (
     <UI
       partite={partite}
@@ -73,31 +67,8 @@ function UI(props) {
   var [modalAggiunta, setModalAggiunta] = useState(false);
   var [modalSign, setModalSign] = useState(false);
   var [modalElimina, setModalElimina] = useState(false);
-  var [camp, setCamp] = useState("");
-  var [nomeBol, setNomeBol] = useState("Bolghera");
-  var [nomeAvv, setNomeAvv] = useState("Ospiti");
   var [isLogin, setIsLogin] = useState(false);
-  var [email, setEmail] = useState("");
-  var [password, setPassword] = useState("");
   var [daEliminare, setDaEliminare] = useState("");
-  const aggiungiPartita = () => {
-    supabase
-      .from(PARTITE_BOLGHERA)
-      .insert({ nomeBol: nomeBol, nomeAvv: nomeAvv, camp: camp })
-      .then();
-    setModalAggiunta(false);
-  };
-  const handleModal = async () => {
-    if (isLogin) {
-      await supabase.auth.signIn({ email: email, password: password });
-    } else {
-      await supabase.auth.signUp({ email: email, password: password });
-    }
-    setModalSign(false);
-    props.forceUpdate();
-  };
-  var eliminaPartita = (id) =>
-    supabase.from(PARTITE_BOLGHERA).delete().eq("id", id).then();
   var signOut = () => {
     supabase.auth.signOut();
     props.forceUpdate();
@@ -158,110 +129,20 @@ function UI(props) {
       <Section>
         <Container>
           <Content>
-            <CustomModal
+            <ModalAggiunta
               show={modalAggiunta}
-              title="Aggiungi nuova partita"
               onClose={() => setModalAggiunta(false)}
-              buttons={
-                <>
-                  <Button onClick={aggiungiPartita} color="success">
-                    Aggiungi
-                  </Button>
-                  <Button onClick={() => setModalAggiunta(false)}>
-                    Annulla
-                  </Button>
-                </>
-              }
-            >
-              <Form.Field>
-                <Form.Label htmlFor="3">Campionato</Form.Label>
-                <Form.Control>
-                  <Form.Input
-                    id="3"
-                    value={camp}
-                    onChange={(e) => setCamp(e.target.value)}
-                  ></Form.Input>
-                </Form.Control>
-              </Form.Field>
-              <Form.Field>
-                <Form.Label htmlFor="1">Nome Bolghera</Form.Label>
-                <Form.Control>
-                  <Form.Input
-                    id="1"
-                    value={nomeBol}
-                    onChange={(e) => setNomeBol(e.target.value)}
-                  ></Form.Input>
-                </Form.Control>
-              </Form.Field>
-              <Form.Field>
-                <Form.Label htmlFor="2">Nome Ospiti</Form.Label>
-                <Form.Control>
-                  <Form.Input
-                    id="2"
-                    value={nomeAvv}
-                    onChange={(e) => setNomeAvv(e.target.value)}
-                  ></Form.Input>
-                </Form.Control>
-              </Form.Field>
-            </CustomModal>
-            <CustomModal
+            />
+            <ModalSignIn
               show={modalSign}
-              title={isLogin ? "Accedi" : "Iscriviti"}
               onClose={() => setModalSign(false)}
-              buttons={
-                <>
-                  <Button onClick={handleModal} color="success">
-                    {isLogin ? "Login" : "Iscriviti"}
-                  </Button>
-                  <Button onClick={() => setModalSign(false)}>Annulla</Button>
-                </>
-              }
-            >
-              <Form.Field>
-                <Form.Label htmlFor="1">Email</Form.Label>
-                <Form.Control>
-                  <Form.Input
-                    id="1"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  ></Form.Input>
-                </Form.Control>
-              </Form.Field>
-              <Form.Field>
-                <Form.Label htmlFor="2">Password</Form.Label>
-                <Form.Control>
-                  <Form.Input
-                    id="2"
-                    value={password}
-                    type="password"
-                    onChange={(e) => setPassword(e.target.value)}
-                  ></Form.Input>
-                </Form.Control>
-              </Form.Field>
-            </CustomModal>
-            <CustomModal
+              isLogin={isLogin}
+            />
+            <ModalElimina
               show={modalElimina}
-              title="Elimina Partita"
               onClose={() => setModalElimina(false)}
-              buttons={
-                <>
-                  <Button
-                    onClick={() => {
-                      eliminaPartita(daEliminare);
-                      setModalElimina(false);
-                    }}
-                    color="danger"
-                  >
-                    {"Elimina"}
-                  </Button>
-                  <Button onClick={() => setModalElimina(false)}>
-                    Annulla
-                  </Button>
-                </>
-              }
-            >
-              <div>Vuoi eliminare la partita?</div>
-            </CustomModal>
+              daEliminare={daEliminare}
+            />
             {props.partite.map((v) => (
               <Partita
                 key={v.id}
@@ -280,15 +161,151 @@ function UI(props) {
   );
 }
 
+function ModalAggiunta({ onClose, show }) {
+  const aggiungiPartita = () =>
+    supabase
+      .from(PARTITE_BOLGHERA)
+      .insert({ nomeBol: nomeBol, nomeAvv: nomeAvv, camp: camp })
+      .then();
+  var [camp, setCamp] = useState("");
+  var [nomeBol, setNomeBol] = useState("");
+  var [nomeAvv, setNomeAvv] = useState("");
+  return (
+    <CustomModal
+      show={show}
+      title="Aggiungi nuova partita"
+      onClose={onClose}
+      buttons={
+        <>
+          <Button onClick={aggiungiPartita} color="success">
+            Aggiungi
+          </Button>
+          <Button onClick={onClose}>Annulla</Button>
+        </>
+      }
+    >
+      <Form.Field>
+        <Form.Label htmlFor="3">Campionato</Form.Label>
+        <Form.Control>
+          <Form.Input
+            id="3"
+            value={camp}
+            onChange={(e) => setCamp(e.target.value)}
+          />
+        </Form.Control>
+      </Form.Field>
+      <Form.Field>
+        <Form.Label htmlFor="1">Nome Squadra 1 (Casa)</Form.Label>
+        <Form.Control>
+          <Form.Input
+            id="1"
+            value={nomeBol}
+            onChange={(e) => setNomeBol(e.target.value)}
+          />
+        </Form.Control>
+      </Form.Field>
+      <Form.Field>
+        <Form.Label htmlFor="2">Nome Squadra 2 (Ospite)</Form.Label>
+        <Form.Control>
+          <Form.Input
+            id="2"
+            value={nomeAvv}
+            onChange={(e) => setNomeAvv(e.target.value)}
+          />
+        </Form.Control>
+      </Form.Field>
+    </CustomModal>
+  );
+}
+
+function ModalSignIn({ isLogin, onClose, show }) {
+  var [email, setEmail] = useState("");
+  var [password, setPassword] = useState("");
+  const handleModal = async () => {
+    if (isLogin) {
+      await supabase.auth.signIn({ email: email, password: password });
+    } else {
+      await supabase.auth.signUp({ email: email, password: password });
+    }
+    onClose();
+  };
+  return (
+    <CustomModal
+      show={show}
+      title={isLogin ? "Accedi" : "Iscriviti"}
+      onClose={onClose}
+      buttons={
+        <>
+          <Button onClick={handleModal} color="success">
+            {isLogin ? "Login" : "Iscriviti"}
+          </Button>
+          <Button onClick={onClose}>Annulla</Button>
+        </>
+      }
+    >
+      <Form.Field>
+        <Form.Label htmlFor="1">Email</Form.Label>
+        <Form.Control>
+          <Form.Input
+            id="1"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </Form.Control>
+      </Form.Field>
+      <Form.Field>
+        <Form.Label htmlFor="2">Password</Form.Label>
+        <Form.Control>
+          <Form.Input
+            id="2"
+            value={password}
+            type="password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </Form.Control>
+      </Form.Field>
+    </CustomModal>
+  );
+}
+
+function ModalElimina({ daEliminare, onClose, show }) {
+  var eliminaPartita = (id) =>
+    supabase.from(PARTITE_BOLGHERA).delete().eq("id", id).then();
+  return (
+    <CustomModal
+      show={show}
+      title="Elimina Partita"
+      onClose={onClose}
+      buttons={
+        <>
+          <Button
+            onClick={() => {
+              eliminaPartita(daEliminare);
+              onClose();
+            }}
+            color="danger"
+          >
+            Elimina
+          </Button>
+          <Button onClick={onClose}>Annulla</Button>
+        </>
+      }
+    >
+      <div>Vuoi eliminare la partita?</div>
+    </CustomModal>
+  );
+}
+
 function reduceSetNormale(obj, keys, bol) {
   return keys.reduce((a, v) => {
     var punti = obj[v].split("-");
+    var punti1, punti2;
     if (bol) {
-      var punti1 = punti[0];
-      var punti2 = punti[1];
+      punti1 = punti[0];
+      punti2 = punti[1];
     } else {
-      var punti1 = punti[1];
-      var punti2 = punti[0];
+      punti1 = punti[1];
+      punti2 = punti[0];
     }
     punti1 = parseInt(punti1);
     punti2 = parseInt(punti2);
@@ -302,12 +319,13 @@ function reduceSetNormale(obj, keys, bol) {
 function reduceSetCorto(obj, keys, bol) {
   return keys.reduce((a, v) => {
     var punti = obj[v].split("-");
+    var punti1, punti2;
     if (bol) {
-      var punti1 = punti[0];
-      var punti2 = punti[1];
+      punti1 = punti[0];
+      punti2 = punti[1];
     } else {
-      var punti1 = punti[1];
-      var punti2 = punti[0];
+      punti1 = punti[1];
+      punti2 = punti[0];
     }
     punti1 = parseInt(punti1);
     punti2 = parseInt(punti2);

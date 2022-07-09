@@ -1,23 +1,20 @@
-import React, { useState, useEffect } from "react";
-import { createClient } from "@supabase/supabase-js";
+import { useEffect, useState } from "react";
+
 import { useRouter } from "next/router";
 
-const PARTITE_BOLGHERA = "partite_bolghera";
-
-const supabase = createClient(
-  "https://ytazfaaqthtbogrdthjf.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYyMzMyODQ2MywiZXhwIjoxOTM4OTA0NDYzfQ.qERtQfqDfQF7_ekIPvmfa7YBXswXGOEfQCz0qcUQOp8"
-);
+import { PARTITE_BOLGHERA } from "lib/const";
+import supabase from "lib/supabaseClient";
 
 function reduceSetNormale(obj, keys, bol) {
   return keys.reduce((a, v) => {
     var punti = obj[v].split("-");
+    var punti1, punti2;
     if (bol) {
-      var punti1 = punti[0];
-      var punti2 = punti[1];
+      punti1 = punti[0];
+      punti2 = punti[1];
     } else {
-      var punti1 = punti[1];
-      var punti2 = punti[0];
+      punti1 = punti[1];
+      punti2 = punti[0];
     }
     punti1 = parseInt(punti1);
     punti2 = parseInt(punti2);
@@ -31,12 +28,13 @@ function reduceSetNormale(obj, keys, bol) {
 function reduceSetCorto(obj, keys, bol) {
   return keys.reduce((a, v) => {
     var punti = obj[v].split("-");
+    var punti1, punti2;
     if (bol) {
-      var punti1 = punti[0];
-      var punti2 = punti[1];
+      punti1 = punti[0];
+      punti2 = punti[1];
     } else {
-      var punti1 = punti[1];
-      var punti2 = punti[0];
+      punti1 = punti[1];
+      punti2 = punti[0];
     }
     punti1 = parseInt(punti1);
     punti2 = parseInt(punti2);
@@ -50,11 +48,11 @@ function reduceSetCorto(obj, keys, bol) {
 export default function Fusion() {
   const router = useRouter();
   var [partita, setPartita] = useState({});
-  var [tmp, setTmp] = useState(0); // Force update
+  var [, setTmp] = useState(0); // Force update
   var forceUpdate = () => setTmp((v) => v + 1);
   useEffect(() => {
+    if (!router.isReady) return;
     async function fetchData() {
-      if (!router.isReady) return;
       const { id } = router.query;
       if (id && isNaN(parseInt(id))) {
         console.error("Id non compatibile");
@@ -77,7 +75,7 @@ export default function Fusion() {
         .subscribe();
     }
     fetchData();
-  }, [router.isReady]);
+  }, [router.isReady, router.query]);
   partita = { ...partita };
   const setKeys = Object.keys(partita).filter((k) => k.startsWith("set"));
   const set1Bol = reduceSetNormale(partita, setKeys.slice(0, 4), true);
@@ -97,7 +95,7 @@ function UI(props) {
         props
       )}`}
     >
-      <thead></thead>
+      <thead />
       <tbody>
         <tr>
           <td>{props.partita.nomeBol}</td>

@@ -1,7 +1,6 @@
-import React from "react";
 import useWebsocket from "../components/websocket.js";
 
-function Roster(props) {
+function Roster() {
   const data = useWebsocket();
   console.log(data);
   return <UI data={data} />;
@@ -59,7 +58,7 @@ function Giocatori({ elenco }) {
               </td>
             </>
           ) : (
-            <td colSpan="2"></td>
+            <td colSpan="2" />
           )}
           {_ospite ? (
             <>
@@ -72,7 +71,7 @@ function Giocatori({ elenco }) {
               </td>
             </>
           ) : (
-            <td colSpan="2"></td>
+            <td colSpan="2" />
           )}
         </tr>
       );

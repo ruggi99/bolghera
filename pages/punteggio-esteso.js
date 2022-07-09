@@ -1,11 +1,9 @@
-import React from "react";
-import useWebsocket from "../components/websocket.js";
-import parseComment from "../components/parseComment.js";
+import parseComment from "components/parseComment";
+import useWebsocket from "components/websocket";
 
 function Punteggio() {
   const data = useWebsocket();
   const data2 = parseComment(data);
-  console.log(data);
   return <UI data={data} {...data2} />;
 }
 
@@ -71,11 +69,11 @@ function RigaAvversari(props) {
 
 function UI(props) {
   if (!props.data) return null;
-  const note = props.data.note;
-  const commento = note.Commento?.split(";") || [];
+  // const note = props.data.note;
+  // const commento = note.Commento?.split(";") || [];
   return (
     <table className="punteggio punteggio-esteso masc">
-      <thead></thead>
+      <thead />
       <tbody>
         {props.inverti ? (
           <>

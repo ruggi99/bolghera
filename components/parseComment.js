@@ -5,14 +5,14 @@ export default function parseComment(data) {
   var nomeCasa, nomeOspiti;
   var liberoCasa, liberoOspiti;
   if (commento[2] && commento[2] != "no comments") {
-    var commento2 = commento[2].split(",");
+    let commento2 = commento[2].split(",");
     nomeCasa = commento2[0];
     liberoCasa = commento2.length >= 2 && commento2[1];
   } else {
     nomeCasa = data.note.SqInDesC;
   }
   if (commento[3] && commento[3] != "no comments") {
-    var commento2 = commento[3].split(",");
+    let commento2 = commento[3].split(",");
     nomeOspiti = commento2[0];
     liberoOspiti = commento2.length >= 2 && commento2[1];
   } else {

@@ -1,8 +1,7 @@
-import React from "react";
-import useWebsocket from "../components/websocket.js";
 import parseComment from "../components/parseComment.js";
+import useWebsocket from "../components/websocket.js";
 
-function Sestetto(props) {
+function Sestetto() {
   const data = useWebsocket();
   if (!data) return null;
   const data2 = parseComment(data);
@@ -49,8 +48,8 @@ function UI(props) {
         <div style={{ marginLeft: "30px", width: "400px" }}>
           <Riserve {...props} bolghera />
         </div>
-        <div style={{ marginRight: "30px", width: "120px" }}></div>
-        <div style={{ marginLeft: "30px", width: "120px" }}></div>
+        <div style={{ marginRight: "30px", width: "120px" }} />
+        <div style={{ marginLeft: "30px", width: "120px" }} />
         <div style={{ marginRight: "30px", width: "400px" }}>
           <Riserve {...props} />
         </div>

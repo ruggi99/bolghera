@@ -1,4 +1,3 @@
-import React from "react";
 import { Modal } from "react-bulma-components";
 
 export default function CustomModal(props) {
@@ -8,6 +7,7 @@ export default function CustomModal(props) {
       onClose={props.onClose}
       showClose={false}
       closeOnBlur={true}
+      onEnter={() => console.log("enter")}
       className="px-3"
     >
       <Modal.Card>
