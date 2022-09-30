@@ -9,7 +9,6 @@ export default function UI() {
   if (!partita) {
     return null;
   }
-  console.log(partita);
   return (
     <table
       className={`punteggio punteggio-corto masc ${calc_set_match_point(

@@ -31,7 +31,6 @@ function addAdditionalData(data) {
 
 export default function useData(supabase, id) {
   var [partita, setPartita] = useState(null);
-  console.log(id);
   useEffect(() => {
     if (id === false) return;
     if (id && isNaN(parseInt(id))) {

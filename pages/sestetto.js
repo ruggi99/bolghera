@@ -18,8 +18,6 @@ function Sestetto() {
   }
   data2["liberoCasa"] = liberoCasa;
   data2["liberoOspiti"] = liberoOspiti;
-  console.log(data);
-  console.log(data2);
   return <UI data={data} {...data2} />;
 }
 

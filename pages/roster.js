@@ -2,7 +2,6 @@ import useWebsocket from "../components/websocket.js";
 
 function Roster() {
   const data = useWebsocket();
-  console.log(data);
   return <UI data={data} />;
 }
 
