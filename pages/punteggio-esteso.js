@@ -19,9 +19,9 @@ function RigaBolghera(props) {
           var score = note[`Set${i + 1}PP4`];
           if (!score) {
             if (i == 0) {
-              return <td>0</td>;
+              return <td key={0}>0</td>;
             } else {
-              return <td />;
+              return <td key={0} />;
             }
           }
           score = score.split("-").map((v) => parseInt(v));
@@ -49,9 +49,9 @@ function RigaAvversari(props) {
           var score = note[`Set${i + 1}PP4`];
           if (!score) {
             if (i == 0) {
-              return <td>0</td>;
+              return <td key={0}>0</td>;
             } else {
-              return <td />;
+              return <td key={0} />;
             }
           }
           score = score.split("-").map((v) => parseInt(v));

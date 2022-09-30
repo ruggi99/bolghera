@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import {
   Block,
@@ -19,17 +19,28 @@ import { reduceSetCorto, reduceSetNormale } from "lib/helpers";
 import supabase from "lib/supabaseClient";
 
 export default function Fusion() {
-  const [partite, setPartite] = useState([]);
+  const [partite, setPartite] = useState(null);
   const [autorizzato, setAutorizzato] = useState(false);
   const [, setTmp] = useState(0);
   const forceUpdate = () => setTmp((v) => v + 1);
   const user = supabase.auth.user();
+  const updateSet = useCallback((id, colonna, valore) => {
+    const obj = { [colonna]: valore };
+    supabase
+      .from(PARTITE_BOLGHERA)
+      .update(obj)
+      .eq("id", id)
+      .then(() =>
+        setPartite((s) => s.map((v) => (v.id == id ? { ...v, ...obj } : v)))
+      );
+  }, []);
   useEffect(() => {
     supabase
       .from(PARTITE_BOLGHERA)
       .select("*")
       .order("id", { ascending: false })
-      .then((r) => setPartite(r.data));
+      .then((r) => setPartite(r.data))
+      .catch(() => setPartite(false));
     supabase
       .from(PARTITE_BOLGHERA)
       .on("INSERT", (r) =>
@@ -58,6 +69,7 @@ export default function Fusion() {
   return (
     <UI
       partite={partite}
+      updateSet={updateSet}
       user={user}
       autorizzato={autorizzato}
       forceUpdate={forceUpdate}
@@ -71,10 +83,7 @@ function UI(props) {
   var [modalElimina, setModalElimina] = useState(false);
   var [isLogin, setIsLogin] = useState(false);
   var [daEliminare, setDaEliminare] = useState("");
-  var signOut = () => {
-    supabase.auth.signOut();
-    props.forceUpdate();
-  };
+  var signOut = () => supabase.auth.signOut();
   return (
     <>
       <Hero color="bolghera" gradient renderAs="div">
@@ -145,17 +154,15 @@ function UI(props) {
               onClose={() => setModalElimina(false)}
               daEliminare={daEliminare}
             />
-            {props.partite.map((v) => (
-              <Partita
-                key={v.id}
-                partita={v}
-                autorizzato={props.autorizzato}
-                eliminaPartita={(id) => {
-                  setDaEliminare(id);
-                  setModalElimina(true);
-                }}
-              />
-            ))}
+            <Partite
+              partite={props.partite}
+              eliminaPartita={(id) => {
+                setDaEliminare(id);
+                setModalElimina(true);
+              }}
+              updateSet={props.updateSet}
+              autorizzato={props.autorizzato}
+            />
           </Content>
         </Container>
       </Section>
@@ -298,6 +305,15 @@ function ModalElimina({ daEliminare, onClose, show }) {
   );
 }
 
+function Partite({ partite, ...props }) {
+  if (partite === null) {
+    return <div>Caricamento</div>;
+  } else if (partite === false) {
+    return <div>Errore</div>;
+  }
+  return partite.map((v) => <Partita key={v.id} partita={v} {...props} />);
+}
+
 function Partita(props) {
   var { partita } = props;
   var setKeys = Object.keys(partita).filter((k) => k.startsWith("set"));
@@ -318,11 +334,12 @@ function Partita(props) {
       punti[1] = punti[1] + (up ? 1 : -1);
     }
     punti = punti.join("-");
-    supabase
-      .from(PARTITE_BOLGHERA)
-      .update({ [set]: punti })
-      .eq("id", partita.id)
-      .then();
+    props.updateSet(partita.id, set, punti);
+    // supabase
+    //   .from(PARTITE_BOLGHERA)
+    //   .update({ [set]: punti })
+    //   .eq("id", partita.id)
+    //   .then();
   };
   return (
     <Box className="partita">
