@@ -71,6 +71,7 @@ table.punteggio-corto {
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
     opacity: 0;
+    content: "";
   }
   &::before {
     top: -4px;
