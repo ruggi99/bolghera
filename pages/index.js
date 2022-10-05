@@ -228,15 +228,29 @@ function ModalAggiunta({ onClose, show }) {
 }
 
 function ModalSignIn({ isLogin, onClose, show }) {
-  var [email, setEmail] = useState("");
-  var [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(false);
   const handleModal = async () => {
     if (isLogin) {
-      await supabase.auth.signIn({ email: email, password: password });
+      supabase.auth
+        .signIn({ email: email, password: password })
+        .then((d) => {
+          if (d.error) throw d.error;
+          setError(false);
+          onClose();
+        })
+        .catch(() => setError(true));
     } else {
-      await supabase.auth.signUp({ email: email, password: password });
+      supabase.auth
+        .signUp({ email: email, password: password })
+        .then((d) => {
+          if (d.error) throw d.error;
+          setError(false);
+          onClose();
+        })
+        .catch(() => setError(true));
     }
-    onClose();
   };
   return (
     <CustomModal
@@ -273,6 +287,9 @@ function ModalSignIn({ isLogin, onClose, show }) {
           />
         </Form.Control>
       </Form.Field>
+      {error && (
+        <p style={{ color: "red" }}>Ci sono stati degli errori. Riprova</p>
+      )}
     </CustomModal>
   );
 }
