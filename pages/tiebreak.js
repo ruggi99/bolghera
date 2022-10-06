@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 
+import useSWR from "swr";
+
 import { PARTITE_BOLGHERA } from "lib/const";
+import { fetcher, throwIfNotOk } from "lib/helpers";
 import supabase from "lib/supabaseClient";
 
 export default function TieBreak() {
@@ -10,10 +13,8 @@ export default function TieBreak() {
   const [partita, setPartita] = useState(null);
   useEffect(() => {
     fetch("/api/vni/rest_api/matches?season_id=169")
-      .then((r) => {
-        if (r.ok) return r.json();
-        else throw r;
-      })
+      .then(throwIfNotOk)
+      .then((r) => r.json())
       .then((d) => {
         console.log(d);
         const todayDate = new Date(
@@ -59,42 +60,16 @@ export default function TieBreak() {
   return <Match match={match} partita={partita} />;
 }
 
-function useReFetch(url, interval) {
-  const [data, setData] = useState(null);
-  const timerID = useRef();
-  useEffect(() => {
-    if (timerID.current) {
-      console.error("timerID già presente");
-      return;
-    }
-    if (interval === 0) {
-      return;
-    }
-    timerID.current = setInterval(
-      () =>
-        fetch(url)
-          .then((r) => {
-            if (r.ok) return r.json();
-            else throw r;
-          })
-          .then(setData)
-          .catch(console.error),
-      interval * 1000
-    );
-    return () => {
-      if (!timerID.current) {
-        console.error("timerID non assegnato");
-      }
-      clearInterval(timerID.current);
-      timerID.current = null;
-    };
-  }, [interval, url]);
-  console.log(timerID.current);
-  return data;
-}
-
 function Match(props) {
-  const data = useReFetch("/api/vni/rest_api/matches/" + props.match.id, 10);
+  const { data } = useSWR(
+    "/api/vni/rest_api/matches/" + props.match.id,
+    fetcher,
+    {
+      refreshInterval: 10_000,
+      refreshWhenHidden: true,
+      revalidateOnMount: false,
+    }
+  );
   let match = data?.matches[0] ?? props.match;
   console.log(match);
   return <Punteggio match={match} partita={props.partita} />;
