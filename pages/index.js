@@ -78,12 +78,8 @@ export default function Fusion() {
 }
 
 function UI(props) {
-  var [modalAggiunta, setModalAggiunta] = useState(false);
-  var [modalSign, setModalSign] = useState(false);
-  var [modalElimina, setModalElimina] = useState(false);
-  var [isLogin, setIsLogin] = useState(false);
-  var [daEliminare, setDaEliminare] = useState("");
-  var signOut = () => supabase.auth.signOut();
+  const [modal, setModal] = useState("");
+  const signOut = () => supabase.auth.signOut();
   return (
     <>
       <Hero color="bolghera" gradient renderAs="div">
@@ -104,20 +100,14 @@ function UI(props) {
             ) : (
               <>
                 <Button
-                  onClick={() => {
-                    setModalSign(true);
-                    setIsLogin(true);
-                  }}
+                  onClick={() => setModal("login")}
                   color="bolghera"
                   inverted
                 >
                   Login
                 </Button>
                 <Button
-                  onClick={() => {
-                    setModalSign(true);
-                    setIsLogin(false);
-                  }}
+                  onClick={() => setModal("sign")}
                   color="bolghera"
                   inverted
                 >
@@ -126,11 +116,7 @@ function UI(props) {
               </>
             )}
             {props.autorizzato && (
-              <Button
-                onClick={() => setModalAggiunta(true)}
-                color="bolghera"
-                inverted
-              >
+              <Button onClick={() => setModal("add")} color="bolghera" inverted>
                 Aggiungi Partita...
               </Button>
             )}
@@ -140,26 +126,20 @@ function UI(props) {
       <Section>
         <Container>
           <Content>
-            <ModalAggiunta
-              show={modalAggiunta}
-              onClose={() => setModalAggiunta(false)}
-            />
+            <ModalAggiunta show={modal == "add"} onClose={() => setModal("")} />
             <ModalSignIn
-              show={modalSign}
-              onClose={() => setModalSign(false)}
-              isLogin={isLogin}
+              show={modal == "login" || modal == "sign"}
+              onClose={() => setModal("")}
+              isLogin={modal == "login"}
             />
             <ModalElimina
-              show={modalElimina}
-              onClose={() => setModalElimina(false)}
-              daEliminare={daEliminare}
+              show={modal.startsWith("delete")}
+              onClose={() => setModal("")}
+              daEliminare={modal.substring(7)}
             />
             <Partite
               partite={props.partite}
-              eliminaPartita={(id) => {
-                setDaEliminare(id);
-                setModalElimina(true);
-              }}
+              eliminaPartita={(id) => setModal("delete-" + id)}
               updateSet={props.updateSet}
               autorizzato={props.autorizzato}
             />
@@ -175,7 +155,7 @@ function ModalAggiunta({ onClose, show }) {
     supabase
       .from(PARTITE_BOLGHERA)
       .insert({ nomeBol: nomeBol, nomeAvv: nomeAvv, camp: camp })
-      .then();
+      .then(onClose);
   var [camp, setCamp] = useState("");
   var [nomeBol, setNomeBol] = useState("");
   var [nomeAvv, setNomeAvv] = useState("");
