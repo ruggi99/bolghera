@@ -231,7 +231,8 @@ function ModalSignIn({ isLogin, onClose, show }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
-  const handleModal = async () => {
+  const handleModal = () => {
+    setError(false);
     if (isLogin) {
       supabase.auth
         .signIn({ email: email, password: password })
