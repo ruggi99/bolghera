@@ -16,7 +16,6 @@ export default function TieBreak() {
       .then(throwIfNotOk)
       .then((r) => r.json())
       .then((d) => {
-        console.log(d);
         const todayDate = new Date(
           process.env.NODE_ENV == "development" ? "2022-10-08" : undefined
         ).toLocaleDateString();
@@ -68,9 +67,10 @@ function Match(props) {
       refreshInterval: 10_000,
       refreshWhenHidden: true,
       revalidateOnMount: false,
+      fallbackData: { matches: [props.match] },
     }
   );
-  let match = data?.matches[0] ?? props.match;
+  let match = data.matches[0];
   console.log(match);
   return <Punteggio match={match} partita={props.partita} />;
 }
