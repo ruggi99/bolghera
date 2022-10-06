@@ -16,7 +16,9 @@ export default function TieBreak() {
       })
       .then((d) => {
         console.log(d);
-        const todayDate = new Date("2022-10-08").toLocaleDateString();
+        const todayDate = new Date(
+          process.env.NODE_ENV == "development" ? "2022-10-08" : undefined
+        ).toLocaleDateString();
         setMatch(
           d.matches.find((p) => {
             const matchDate = new Date(p.date).toLocaleDateString();
@@ -88,9 +90,7 @@ function useReFetch(url, interval) {
     };
   }, [interval, url]);
   console.log(timerID.current);
-  return data
-    ? { ...data, matches: [{ ...data.matches[0], hsset1: 22 }] }
-    : data;
+  return data;
 }
 
 function Match(props) {
