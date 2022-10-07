@@ -12,21 +12,23 @@ export default function TieBreak() {
   // Supabase
   const [partita, setPartita] = useState(null);
   useEffect(() => {
-    fetch("/api/vni/rest_api/matches?season_id=169")
+    fetch("/api/vni/rest_api/pages/team?team_id=1411")
       .then(throwIfNotOk)
       .then((r) => r.json())
       .then((d) => {
         const todayDate = new Date(
           process.env.NODE_ENV == "development" ? "2022-10-08" : undefined
         ).toLocaleDateString();
-        setMatch(
-          d.matches.find((p) => {
-            const matchDate = new Date(p.date).toLocaleDateString();
-            if (todayDate != matchDate) return false;
-            if (p.hteam_id != 1411 && p.vteam_id != 1411) return false;
-            return true;
-          })
-        );
+        const match = d.prossimeGiornate[0];
+        const matchDate = new Date(
+          "20" + match.date.split("-").reverse().join("-")
+        ).toLocaleDateString();
+        console.log(matchDate);
+        if (todayDate == matchDate) {
+          setMatch(match);
+        } else {
+          setMatch(undefined);
+        }
       })
       .catch((e) => {
         console.error(e);
@@ -66,12 +68,11 @@ function Match(props) {
     {
       refreshInterval: 10_000,
       refreshWhenHidden: true,
-      revalidateOnMount: false,
-      fallbackData: { matches: [props.match] },
     }
   );
-  let match = data.matches[0];
+  let match = data?.matches[0];
   console.log(match);
+  if (!match) return null;
   return <Punteggio match={match} partita={props.partita} />;
 }
 
