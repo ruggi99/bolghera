@@ -16,14 +16,15 @@ export default function TieBreak() {
       .then(throwIfNotOk)
       .then((r) => r.json())
       .then((d) => {
-        const todayDate = new Date(
-          process.env.NODE_ENV == "development" ? "2022-10-08" : undefined
+        const todayDate = (
+          process.env.NODE_ENV == "development"
+            ? new Date("2022-10-08")
+            : new Date()
         ).toLocaleDateString();
-        const match = d.prossimeGiornate[0];
+        const match = d.primeGiornate[d.primeGiornate.length - 1];
         const matchDate = new Date(
           "20" + match.date.split("-").reverse().join("-")
         ).toLocaleDateString();
-        console.log(matchDate);
         if (todayDate == matchDate) {
           setMatch(match);
         } else {
@@ -91,7 +92,9 @@ function Punteggio({ match, partita }) {
         console.log("Data needs update");
         const to_update = {};
         for (let i = 1; i <= 5; i++) {
-          to_update["set" + i] = `${match["hsset" + i]}-${match["vsset" + i]}`;
+          to_update["set" + i] = `${match["hsset" + (i - 1)]}-${
+            match["vsset" + (i - 1)]
+          }`;
         }
         supabase
           .from(PARTITE_BOLGHERA)
