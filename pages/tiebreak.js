@@ -67,7 +67,7 @@ function Match(props) {
     "/api/vni/rest_api/matches/" + props.match.id,
     fetcher,
     {
-      refreshInterval: 10_000,
+      refreshInterval: 5_000,
       refreshWhenHidden: true,
     }
   );
