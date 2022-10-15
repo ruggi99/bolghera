@@ -21,7 +21,7 @@ export default function TieBreak() {
             ? new Date("2022-10-08")
             : new Date()
         ).toLocaleDateString();
-        const match = d.primeGiornate[d.primeGiornate.length - 1];
+        const match = d.primeGiornate[0];
         const matchDate = new Date(
           "20" + match.date.split("-").reverse().join("-")
         ).toLocaleDateString();
