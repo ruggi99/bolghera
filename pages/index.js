@@ -35,12 +35,15 @@ export default function Fusion() {
       );
   }, []);
   useEffect(() => {
-    supabase
-      .from(PARTITE_BOLGHERA)
-      .select("*")
-      .order("id", { ascending: false })
-      .then((r) => setPartite(r.data))
-      .catch(() => setPartite(false));
+    function fetchData() {
+      supabase
+        .from(PARTITE_BOLGHERA)
+        .select("*")
+        .order("id", { ascending: false })
+        .then((r) => setPartite(r.data))
+        .catch(() => setPartite(false));
+    }
+    supabase.realtime.onOpen(fetchData);
     supabase
       .from(PARTITE_BOLGHERA)
       .on("INSERT", (r) =>
