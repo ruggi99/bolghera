@@ -313,18 +313,23 @@ function Partite({ partite, ...props }) {
 }
 
 function Partita(props) {
-  var { partita } = props;
-  var setKeys = Object.keys(partita).filter((k) => k.startsWith("set"));
-  var setBol =
+  const { partita } = props;
+  const setKeys = Object.keys(partita).filter((k) => k.startsWith("set"));
+  const setLeft =
     reduceSetNormale(partita, setKeys.slice(0, 4), true) +
     reduceSetCorto(partita, setKeys.slice(4, 5), true);
-  var setAvv =
+  const setRight =
     reduceSetNormale(partita, setKeys.slice(0, 4), false) +
     reduceSetCorto(partita, setKeys.slice(4, 5), false);
-  var modificaSet = (set, up, bol) => {
+  const bolgheraSide = partita.nomeBol.contains("Bolghera")
+    ? "left"
+    : partita.nomeAvv.contains("Bolghera")
+    ? "right"
+    : "none";
+  const modificaSet = (set, up, leftSide) => {
     var punti = partita[set].split("-");
     punti = punti.map((p) => parseInt(p));
-    if (bol) {
+    if (leftSide) {
       if (!up && !punti[0]) return;
       punti[0] = punti[0] + (up ? 1 : -1);
     } else {
@@ -333,11 +338,6 @@ function Partita(props) {
     }
     punti = punti.join("-");
     props.updateSet(partita.id, set, punti);
-    // supabase
-    //   .from(PARTITE_BOLGHERA)
-    //   .update({ [set]: punti })
-    //   .eq("id", partita.id)
-    //   .then();
   };
   return (
     <Box className="partita">
@@ -354,10 +354,10 @@ function Partita(props) {
         <div style={{ marginRight: "1rem" }}>{partita.nomeBol}</div>
         <Tag
           size="large"
-          color={setBol == 3 ? "success" : setAvv == 3 ? "danger" : ""}
+          color={getResultTagColor(setLeft, setRight, bolgheraSide)}
           mr="4"
         >
-          {setBol} - {setAvv}
+          {setLeft} - {setRight}
         </Tag>
         <div>{partita.nomeAvv}</div>
         {props.autorizzato && (
@@ -369,8 +369,8 @@ function Partita(props) {
       <Block>
         {setKeys
           .filter((s, i) => {
-            var totalSet = setBol + setAvv;
-            if (setBol == 3 || setAvv == 3) {
+            var totalSet = setLeft + setRight;
+            if (setLeft == 3 || setRight == 3) {
               totalSet--;
             }
             if (i <= totalSet) {
@@ -394,6 +394,17 @@ function Partita(props) {
       )}
     </Box>
   );
+}
+
+function getResultTagColor(setLeft, setRight, bolgheraSide) {
+  if (bolgheraSide == "none") return "";
+  if (setLeft == 3) {
+    if (bolgheraSide == "left") return "success";
+    return "danger";
+  } else if (setRight == 3) {
+    if (bolgheraSide == "left") return "danger";
+    return "success";
+  } else return "";
 }
 
 function Set(props) {
