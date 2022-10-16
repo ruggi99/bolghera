@@ -71,7 +71,7 @@ function Match(props) {
       refreshWhenHidden: true,
     }
   );
-  let match = data?.matches[0];
+  const match = data?.matches[0];
   console.log(match);
   if (!match) return null;
   return <Punteggio match={match} partita={props.partita} />;
