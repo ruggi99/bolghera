@@ -321,9 +321,9 @@ function Partita(props) {
   const setRight =
     reduceSetNormale(partita, setKeys.slice(0, 4), false) +
     reduceSetCorto(partita, setKeys.slice(4, 5), false);
-  const bolgheraSide = partita.nomeBol.contains("Bolghera")
+  const bolgheraSide = partita.nomeBol.includes("Bolghera")
     ? "left"
-    : partita.nomeAvv.contains("Bolghera")
+    : partita.nomeAvv.includes("Bolghera")
     ? "right"
     : "none";
   const modificaSet = (set, up, leftSide) => {
