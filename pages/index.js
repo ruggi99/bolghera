@@ -311,6 +311,8 @@ function Partite({ partite, ...props }) {
     return <div>Caricamento</div>;
   } else if (partite === false) {
     return <div>Errore</div>;
+  } else if (partite?.length === 0) {
+    return <div>Nessuna partita</div>;
   }
   return partite.map((v) => <Partita key={v.id} partita={v} {...props} />);
 }
