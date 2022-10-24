@@ -6,13 +6,18 @@ import { PARTITE_BOLGHERA } from "lib/const";
 import { fetcher, throwIfNotOk } from "lib/helpers";
 import supabase from "lib/supabaseClient";
 
+const TEAM_ID = 106;
+
 export default function TieBreak() {
   // Tiebreak
   const [match, setMatch] = useState(null);
   // Supabase
   const [partita, setPartita] = useState(null);
   useEffect(() => {
-    fetch("/api/vni/rest_api/pages/team?team_id=1411")
+    fetch(
+      "/api/vni/stats_test/rest_api/pages/team?client_name=fipavserieb&team_id=" +
+        TEAM_ID
+    )
       .then(throwIfNotOk)
       .then((r) => r.json())
       .then((d) => {
@@ -64,7 +69,9 @@ export default function TieBreak() {
 
 function Match(props) {
   const { data } = useSWR(
-    "/api/vni/rest_api/matches/" + props.match.id,
+    "/api/vni/stats_test/rest_api/matches/" +
+      props.match.id +
+      "?client_name=fipavserieb",
     fetcher,
     {
       refreshInterval: 5_000,

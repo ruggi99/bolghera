@@ -7,7 +7,7 @@ export default function handler(req, res) {
     res.status(401).end();
     return;
   }
-  return fetch("http://volleynetworkitalia.it" + req.url.substring(8))
+  return fetch("https://srv4.matchshare.it" + req.url.substring(8))
     .then((r) => {
       if (r.ok) return r.json();
       throw r;
