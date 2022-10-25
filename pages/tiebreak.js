@@ -4,6 +4,7 @@ import useSWR from "swr";
 
 import { PARTITE_BOLGHERA } from "lib/const";
 import { fetcher, throwIfNotOk } from "lib/helpers";
+import useUser from "lib/hooks/useUser";
 import supabase from "lib/supabaseClient";
 
 const TEAM_ID = 106;
@@ -13,6 +14,7 @@ export default function TieBreak() {
   const [match, setMatch] = useState(null);
   // Supabase
   const [partita, setPartita] = useState(null);
+  const user = useUser(supabase);
   useEffect(() => {
     fetch(
       "/api/vni/stats_test/rest_api/pages/team?client_name=fipavserieb&team_id=" +
@@ -49,7 +51,7 @@ export default function TieBreak() {
       .then((p) => setPartita(p.data))
       .catch(() => setPartita(false));
   }, []);
-  if (!supabase.auth.user()) {
+  if (!user) {
     return "Nessun utente loggato";
   }
   if (match === null || partita === null) {

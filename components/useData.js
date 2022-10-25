@@ -41,13 +41,24 @@ export default function useData(supabase, id) {
       const partita = await fetchData(supabase, id);
       setPartita(addAdditionalData(partita));
       supabase
-        .from(`${PARTITE_BOLGHERA}:id=eq.${partita.id}`)
-        .on("UPDATE", (r) => setPartita(addAdditionalData(r.new)))
-        .subscribe();
-      // Ogni volta che la connessione websocket viene aperta, riscarico i dati
-      supabase.realtime.onOpen(() => {
-        fetchData(supabase, id, (data) => setPartita(addAdditionalData(data)));
-      });
+        .channel("public: " + PARTITE_BOLGHERA)
+        .on(
+          "postgres_changes",
+          {
+            event: "UPDATE",
+            schema: "public",
+            table: PARTITE_BOLGHERA,
+            filter: `id=eq.${partita.id}`,
+          },
+          (r) => setPartita(addAdditionalData(r.new))
+        )
+        .subscribe((status) => {
+          // Ogni volta che la connessione websocket viene aperta, riscarico i dati
+          if (status != "SUBSCRIBED") return;
+          fetchData(supabase, id, (data) =>
+            setPartita(addAdditionalData(data))
+          );
+        });
     }
     _fetchData();
   }, [id, supabase]);

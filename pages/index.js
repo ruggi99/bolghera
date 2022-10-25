@@ -16,14 +16,15 @@ import {
 import CustomModal from "components/CustomModal";
 import { AUTORIZZATI, PARTITE_BOLGHERA } from "lib/const";
 import { reduceSetCorto, reduceSetNormale } from "lib/helpers";
+import useUser from "lib/hooks/useUser";
 import supabase from "lib/supabaseClient";
 
 export default function Fusion() {
   const [partite, setPartite] = useState(null);
   const [autorizzato, setAutorizzato] = useState(false);
+  const user = useUser(supabase);
   const [, setTmp] = useState(0);
   const forceUpdate = () => setTmp((v) => v + 1);
-  const user = supabase.auth.user();
   const updateSet = useCallback((id, colonna, valore) => {
     const obj = { [colonna]: valore };
     supabase
@@ -43,20 +44,33 @@ export default function Fusion() {
         .then((r) => setPartite(r.data))
         .catch(() => setPartite(false));
     }
-    supabase.realtime.onOpen(fetchData);
     supabase
-      .from(PARTITE_BOLGHERA)
-      .on("INSERT", (r) =>
-        setPartite((s) => {
-          return s.some((v) => v.id == r.new.id) ? s : [r.new, ...s];
-        })
+      .channel("public:" + PARTITE_BOLGHERA)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: PARTITE_BOLGHERA },
+        (r) =>
+          setPartite((s) => {
+            return s.some((v) => v.id == r.new.id) ? s : [r.new, ...s];
+          })
       )
-      .on("UPDATE", (r) =>
-        setPartite((s) => s.map((v) => (v.id == r.new.id ? r.new : v)))
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: PARTITE_BOLGHERA },
+        (r) => setPartite((s) => s.map((v) => (v.id == r.new.id ? r.new : v)))
       )
-      .on("DELETE", (r) => setPartite((s) => s.filter((v) => v.id != r.old.id)))
-      .subscribe();
-    supabase.auth.onAuthStateChange(() => forceUpdate());
+      .on(
+        "postgres_changes",
+        { event: "DELETE", schema: "public", table: PARTITE_BOLGHERA },
+        (r) => setPartite((s) => s.filter((v) => v.id != r.old.id))
+      )
+      .subscribe((status, error) => {
+        console.log(status, error);
+        if (status == "SUBSCRIBED") {
+          console.log("subscribe ok");
+          fetchData();
+        }
+      });
   }, []);
   useEffect(() => {
     if (user) {
@@ -218,7 +232,7 @@ function ModalSignIn({ isLogin, onClose, show }) {
     setError(false);
     if (isLogin) {
       supabase.auth
-        .signIn({ email: email, password: password })
+        .signInWithPassword({ email: email, password: password })
         .then((d) => {
           if (d.error) throw d.error;
           setError(false);
