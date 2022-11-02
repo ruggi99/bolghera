@@ -147,7 +147,6 @@ function UI(props) {
             <ModalSignIn
               show={modal == "login" || modal == "sign"}
               onClose={() => setModal("")}
-              isLogin={modal == "login"}
             />
             <ModalElimina
               show={modal.startsWith("delete")}
@@ -224,64 +223,70 @@ function ModalAggiunta({ onClose, show }) {
   );
 }
 
-function ModalSignIn({ isLogin, onClose, show }) {
+function ModalSignIn({ onClose, show }) {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [token, setToken] = useState("");
   const [error, setError] = useState(false);
-  const handleModal = () => {
-    setError(false);
-    if (isLogin) {
-      supabase.auth
-        .signInWithPassword({ email: email, password: password })
-        .then((d) => {
-          if (d.error) throw d.error;
-          setError(false);
-          onClose();
-        })
-        .catch(() => setError(true));
-    } else {
-      supabase.auth
-        .signUp({ email: email, password: password })
-        .then((d) => {
-          if (d.error) throw d.error;
-          setError(false);
-          onClose();
-        })
-        .catch(() => setError(true));
+  const sendLink = async (e) => {
+    e.preventDefault();
+    const { error } = await supabase.auth.signInWithOtp({ email });
+    if (error) {
+      setError(error);
+      return;
     }
+    setError(false);
+  };
+  const verifyToken = async (e) => {
+    e.preventDefault();
+    const { error } = await supabase.auth.verifyOtp({
+      email,
+      token,
+      type: "recovery",
+    });
+    if (error) {
+      setError(error);
+      return;
+    }
+    setError(false);
+    onClose();
   };
   return (
     <CustomModal
       show={show}
-      title={isLogin ? "Accedi" : "Iscriviti"}
+      title="Accedi o Iscriviti"
       onClose={onClose}
       buttons={
         <>
-          <Button onClick={handleModal} color="success">
-            {isLogin ? "Login" : "Iscriviti"}
+          <Button onClick={verifyToken} color="success">
+            Verifica
           </Button>
           <Button onClick={onClose}>Annulla</Button>
         </>
       }
     >
       <Form.Field>
-        <Form.Label htmlFor="1">Email</Form.Label>
+        <Form.Label htmlFor="email">Email</Form.Label>
         <Form.Control>
           <Form.Input
-            id="1"
+            id="email"
+            type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </Form.Control>
       </Form.Field>
       <Form.Field>
-        <Form.Label htmlFor="2">Password</Form.Label>
+        <Button onClick={sendLink} color="success">
+          Invia OTP
+        </Button>
+      </Form.Field>
+      <Form.Field>
+        <Form.Label htmlFor="token">Token</Form.Label>
         <Form.Control>
           <Form.Input
-            id="2"
-            value={password}
-            type="password"
-            onChange={(e) => setPassword(e.target.value)}
+            id="token"
+            value={token}
+            onChange={(e) => setToken(e.target.value)}
           />
         </Form.Control>
       </Form.Field>
