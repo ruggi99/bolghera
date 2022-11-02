@@ -115,22 +115,13 @@ function UI(props) {
                 Log Out
               </Button>
             ) : (
-              <>
-                <Button
-                  onClick={() => setModal("login")}
-                  color="bolghera"
-                  inverted
-                >
-                  Login
-                </Button>
-                <Button
-                  onClick={() => setModal("sign")}
-                  color="bolghera"
-                  inverted
-                >
-                  Iscriviti
-                </Button>
-              </>
+              <Button
+                onClick={() => setModal("login")}
+                color="bolghera"
+                inverted
+              >
+                Login
+              </Button>
             )}
             {props.autorizzato && (
               <Button onClick={() => setModal("add")} color="bolghera" inverted>
@@ -275,11 +266,11 @@ function ModalSignIn({ onClose, show }) {
           />
         </Form.Control>
       </Form.Field>
-      <Form.Field>
+      <Button.Group align="right">
         <Button onClick={sendLink} color="success">
           Invia OTP
         </Button>
-      </Form.Field>
+      </Button.Group>
       <Form.Field>
         <Form.Label htmlFor="token">Token</Form.Label>
         <Form.Control>
