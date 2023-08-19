@@ -36,12 +36,12 @@ function getLastPoints(obj, bol) {
   return obj[lastKey].split("-")[bol ? 0 : 1];
 }
 
-function Set(props) {
-  const set = props.bol ? props.partita.setBol : props.partita.setAvv;
+function Set({ bol, partita }) {
+  const set = bol ? partita.setBol : partita.setAvv;
   return (
     <>
       <td>{set}</td>
-      <td>{getLastPoints(props.partita, props.bol)}</td>
+      <td>{getLastPoints(partita, bol)}</td>
     </>
   );
 }

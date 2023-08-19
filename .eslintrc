@@ -43,6 +43,7 @@
     ],
     "react/display-name": ["error"],
     "react-hooks/exhaustive-deps": "error",
+    "react/destructuring-assignment": "error",
     "simple-import-sort/imports": [
       "error",
       {

@@ -1,10 +1,16 @@
 import { Modal } from "react-bulma-components";
 
-export default function CustomModal(props) {
+export default function CustomModal({
+  buttons,
+  children,
+  onClose,
+  show,
+  title,
+}) {
   return (
     <Modal
-      show={props.show}
-      onClose={props.onClose}
+      show={show}
+      onClose={onClose}
       showClose={false}
       closeOnBlur={true}
       onEnter={() => console.log("enter")}
@@ -12,11 +18,11 @@ export default function CustomModal(props) {
     >
       <Modal.Card>
         <Modal.Card.Header>
-          <Modal.Card.Title>{props.title}</Modal.Card.Title>
+          <Modal.Card.Title>{title}</Modal.Card.Title>
         </Modal.Card.Header>
-        <Modal.Card.Body>{props.children}</Modal.Card.Body>
+        <Modal.Card.Body>{children}</Modal.Card.Body>
         <Modal.Card.Footer justifyContent="flex-end">
-          {props.buttons}
+          {buttons}
         </Modal.Card.Footer>
       </Modal.Card>
     </Modal>
