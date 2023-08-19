@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 
 import { PARTITE_BOLGHERA } from "lib/const";
+import useUser from "lib/hooks/useUser";
 import supabase from "lib/supabaseClient";
 import { useNewb, useSSE, useSupabase } from "lib/useData";
 import { useData } from "lib/useData";
@@ -10,8 +11,9 @@ export default function TieBreak() {
   const match = useData();
   // Supabase
   const partita = useSupabase();
+  const user = useUser(supabase);
 
-  if (!supabase.auth.user()) {
+  if (!user) {
     return "Nessun utente loggato";
   }
   if (match === null || partita === null) {
