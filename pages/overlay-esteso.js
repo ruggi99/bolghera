@@ -26,18 +26,16 @@ export default function UI() {
   );
 }
 
-function Set(props) {
-  const set = props.bol ? props.partita.setBol : props.partita.setAvv;
+function Set({ bol, partita }) {
+  const set = bol ? partita.setBol : partita.setAvv;
   return (
     <>
       <td>{set}</td>
       {Array(5)
         .fill()
         .map((v, i) => {
-          const point = props.partita[props.partita.setKeys[i]];
-          return (
-            <td key={i}>{point ? point.split("-")[props.bol ? 0 : 1] : ""}</td>
-          );
+          const point = partita[partita.setKeys[i]];
+          return <td key={i}>{point ? point.split("-")[bol ? 0 : 1] : ""}</td>;
         })}
     </>
   );

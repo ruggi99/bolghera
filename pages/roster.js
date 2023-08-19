@@ -5,10 +5,10 @@ function Roster() {
   return <UI data={data} />;
 }
 
-function UI(props) {
-  if (!props.data || !props.data.elenco || !props.data.note) return null;
-  const note = props.data.note;
-  const elenco = props.data.elenco;
+function UI({ data }) {
+  if (!data || !data.elenco || !data.note) return null;
+  const note = data.note;
+  const elenco = data.elenco;
   const commento = note.Commento ? note.Commento.split(";") : [];
   return (
     <table className="roster">

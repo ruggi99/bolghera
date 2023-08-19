@@ -21,72 +21,71 @@ function Sestetto() {
   return <UI data={data} {...data2} />;
 }
 
-function UI(props) {
-  if (!props.data || !props.data.elenco || !props.data.note) return null;
-  const note = props.data.note;
+function UI({ data }) {
+  if (!data || !data.elenco || !data.note) return null;
+  const note = data.note;
   return (
     <div className="sestetto">
       <div style={{ marginLeft: "30px" }}>
         <div className="nome-squadra">{note.SqInDesC}</div>
-        <Quadrato bolghera {...props} />
+        <Quadrato bolghera data={data} />
       </div>
       <div style={{ marginRight: "30px" }}>
-        <Allenatore bolghera {...props} />
-        <Libero bolghera {...props} libero />
+        <Allenatore bolghera data={data} />
+        <Libero bolghera data={data} libero />
       </div>
       <div style={{ marginLeft: "30px" }}>
-        <Allenatore {...props} />
-        <Libero {...props} libero />
+        <Allenatore data={data} />
+        <Libero data={data} libero />
       </div>
       <div style={{ marginRight: "30px" }}>
         <div className="nome-squadra">{note.SqOsDesC}</div>
-        <Quadrato {...props} />
+        <Quadrato data={data} />
       </div>
       <div className="riserve">
         <div style={{ marginLeft: "30px", width: "400px" }}>
-          <Riserve {...props} bolghera />
+          <Riserve data={data} bolghera />
         </div>
         <div style={{ marginRight: "30px", width: "120px" }} />
         <div style={{ marginLeft: "30px", width: "120px" }} />
         <div style={{ marginRight: "30px", width: "400px" }}>
-          <Riserve {...props} />
+          <Riserve data={data} />
         </div>
       </div>
     </div>
   );
 }
 
-function Quadrato(props) {
+function Quadrato({ bolghera, data }) {
   return (
-    <div className={"quadrato " + (props.bolghera ? "bolghera" : "")}>
-      <TreMetri {...props} bolghera={props.bolghera} />
-      <SeiMetri {...props} bolghera={props.bolghera} />
+    <div className={"quadrato " + (bolghera ? "bolghera" : "")}>
+      <TreMetri data={data} bolghera={bolghera} />
+      <SeiMetri data={data} bolghera={bolghera} />
     </div>
   );
 }
 
-function TreMetri(props) {
+function TreMetri({ bolghera, data }) {
   return (
     <div className="tre-metri">
-      <Persona {...props} n="4" bolghera={props.bolghera} />
-      <Persona {...props} n="3" bolghera={props.bolghera} />
-      <Persona {...props} n="2" bolghera={props.bolghera} />
+      <Persona data={data} n="4" bolghera={bolghera} />
+      <Persona data={data} n="3" bolghera={bolghera} />
+      <Persona data={data} n="2" bolghera={bolghera} />
     </div>
   );
 }
 
-function SeiMetri(props) {
+function SeiMetri({ bolghera, data }) {
   return (
     <div className="sei-metri">
-      <Persona {...props} n="5" bolghera={props.bolghera} />
-      <Persona {...props} n="6" bolghera={props.bolghera} />
-      <Persona {...props} n="1" bolghera={props.bolghera} />
+      <Persona data={data} n="5" bolghera={bolghera} />
+      <Persona data={data} n="6" bolghera={bolghera} />
+      <Persona data={data} n="1" bolghera={bolghera} />
     </div>
   );
 }
 
-function Persona(props) {
-  const { bolghera, data } = props;
+function Persona({ bolghera, data, n }) {
   if (!data.note.RotUltima) {
     return null;
   }
@@ -96,13 +95,13 @@ function Persona(props) {
       (p) =>
         p.Pet ==
         data.note.RotUltima.substr(
-          (bolghera ? 0 : 12) + (Number(props.n) - 1) * 2,
+          (bolghera ? 0 : 12) + (Number(n) - 1) * 2,
           2
         ).trim()
     );
   const NPall = data.note[bolghera ? "ZPagg0" : "ZPagg1"];
   const classes = ["persona"];
-  if (NPall == props.n) {
+  if (NPall == n) {
     classes.push("pall");
   }
   if (giocatore.Id == "C") {
@@ -128,17 +127,16 @@ function Allenatore(props) {
   );
 }
 
-function Libero(props) {
-  const { bolghera, data } = props;
+function Libero({ bolghera, data, liberoCasa, liberoOspiti }) {
   var giocatore;
   if (bolghera) {
     giocatore = data.elenco
       .filter((p) => p.CodSq == "0")
-      .find((p) => p.Pet == props.liberoCasa);
+      .find((p) => p.Pet == liberoCasa);
   } else {
     giocatore = data.elenco
       .filter((p) => p.CodSq == "1")
-      .find((p) => p.Pet == props.liberoOspiti);
+      .find((p) => p.Pet == liberoOspiti);
   }
   if (!giocatore) return null;
   return (
@@ -149,10 +147,10 @@ function Libero(props) {
   );
 }
 
-function Riserve(props) {
-  const giocatori = props.data.elenco
-    .filter((p) => p.CodSq == (props.bolghera ? "0" : "1"))
-    .filter((p) => calc_riserva(p, props));
+function Riserve({ bolghera, data, liberoCasa, liberoOspiti }) {
+  const giocatori = data.elenco
+    .filter((p) => p.CodSq == (bolghera ? "0" : "1"))
+    .filter((p) => calc_riserva(p, { bolghera, liberoCasa, liberoOspiti }));
   const cognomi = giocatori.map((p) => capitalize(p.Cognome) + calc_cognome(p));
   return <div className="riserve-q">A disposizione: {cognomi.join(", ")}.</div>;
 }

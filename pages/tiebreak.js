@@ -69,10 +69,10 @@ export default function TieBreak() {
   return <Match match={match} partita={partita} />;
 }
 
-function Match(props) {
+function Match({ match, partita }) {
   const { data } = useSWR(
     "/api/vni/stats_test/rest_api/matches/" +
-      props.match.id +
+      match.id +
       "?client_name=fipavserieb",
     fetcher,
     {
@@ -80,10 +80,10 @@ function Match(props) {
       refreshWhenHidden: true,
     }
   );
-  const match = data?.matches[0];
+  match = data?.matches[0];
   console.log(match);
   if (!match) return null;
-  return <Punteggio match={match} partita={props.partita} />;
+  return <Punteggio match={match} partita={partita} />;
 }
 
 function Punteggio({ match, partita }) {

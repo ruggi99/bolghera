@@ -94,23 +94,23 @@ export default function Fusion() {
   );
 }
 
-function UI(props) {
+function UI({ autorizzato, partite, updateSet, user }) {
   const [modal, setModal] = useState("");
   const signOut = () => supabase.auth.signOut();
   return (
     <>
       <Hero color="bolghera" gradient renderAs="div">
         <Hero.Body>
-          {props.user && (
+          {user && (
             <>
-              <Heading>Utente {props.user.email}</Heading>
+              <Heading>Utente {user.email}</Heading>
               <Heading subtitle>
-                {props.autorizzato ? "Sei" : "Non sei"} autorizzato
+                {autorizzato ? "Sei" : "Non sei"} autorizzato
               </Heading>
             </>
           )}
           <Button.Group>
-            {props.user ? (
+            {user ? (
               <Button onClick={signOut} color="bolghera" inverted>
                 Log Out
               </Button>
@@ -132,7 +132,7 @@ function UI(props) {
                 </Button>
               </>
             )}
-            {props.autorizzato && (
+            {autorizzato && (
               <Button onClick={() => setModal("add")} color="bolghera" inverted>
                 Aggiungi Partita...
               </Button>
@@ -155,10 +155,10 @@ function UI(props) {
               daEliminare={modal.substring(7)}
             />
             <Partite
-              partite={props.partite}
+              partite={partite}
               eliminaPartita={(id) => setModal("delete-" + id)}
-              updateSet={props.updateSet}
-              autorizzato={props.autorizzato}
+              updateSet={updateSet}
+              autorizzato={autorizzato}
             />
           </Content>
         </Container>
@@ -331,8 +331,7 @@ function Partite({ partite, ...props }) {
   return partite.map((v) => <Partita key={v.id} partita={v} {...props} />);
 }
 
-function Partita(props) {
-  const { partita } = props;
+function Partita({ autorizzato, eliminaPartita, partita, updateSet }) {
   const setKeys = Object.keys(partita).filter((k) => k.startsWith("set"));
   const setLeft =
     reduceSetNormale(partita, setKeys.slice(0, 4), true) +
@@ -356,7 +355,7 @@ function Partita(props) {
       punti[1] = punti[1] + (up ? 1 : -1);
     }
     punti = punti.join("-");
-    props.updateSet(partita.id, set, punti);
+    updateSet(partita.id, set, punti);
   };
   return (
     <Box className="partita">
@@ -379,7 +378,7 @@ function Partita(props) {
           {setLeft} - {setRight}
         </Tag>
         <div>{partita.nomeAvv}</div>
-        {props.autorizzato && (
+        {autorizzato && (
           <Tag size="small" id="id">
             Id: {partita.id}
           </Tag>
@@ -402,12 +401,12 @@ function Partita(props) {
               set={v}
               value={partita[v]}
               modificaSet={modificaSet}
-              autorizzato={props.autorizzato}
+              autorizzato={autorizzato}
             />
           ))}
       </Block>
-      {props.autorizzato && (
-        <Button onClick={() => props.eliminaPartita(partita.id)}>
+      {autorizzato && (
+        <Button onClick={() => eliminaPartita(partita.id)}>
           Elimina Partita...
         </Button>
       )}
@@ -426,36 +425,24 @@ function getResultTagColor(setLeft, setRight, bolgheraSide) {
   } else return "";
 }
 
-function Set(props) {
+function Set({ autorizzato, modificaSet, set, value }) {
   return (
     <Block>
       <Heading renderAs="h3" subtitle>
-        Set {props.set[3]}: {props.value}
+        Set {set[3]}: {value}
       </Heading>
-      {props.autorizzato && (
+      {autorizzato && (
         <Button.Group>
-          <Button
-            size="medium"
-            onClick={() => props.modificaSet(props.set, false, true)}
-          >
+          <Button size="medium" onClick={() => modificaSet(set, false, true)}>
             -
           </Button>
-          <Button
-            size="medium"
-            onClick={() => props.modificaSet(props.set, true, true)}
-          >
+          <Button size="medium" onClick={() => modificaSet(set, true, true)}>
             +
           </Button>
-          <Button
-            size="medium"
-            onClick={() => props.modificaSet(props.set, false, false)}
-          >
+          <Button size="medium" onClick={() => modificaSet(set, false, false)}>
             -
           </Button>
-          <Button
-            size="medium"
-            onClick={() => props.modificaSet(props.set, true, false)}
-          >
+          <Button size="medium" onClick={() => modificaSet(set, true, false)}>
             +
           </Button>
         </Button.Group>

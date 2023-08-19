@@ -7,11 +7,11 @@ function Punteggio() {
   return <UI data={data} {...data2} />;
 }
 
-function RigaBolghera(props) {
-  const note = props.data.note;
+function RigaBolghera({ data, nomeCasa }) {
+  const note = data.note;
   return (
     <tr>
-      <td>{props.nomeCasa}</td>
+      <td>{nomeCasa}</td>
       <td>{note.SE0 || 0}</td>
       <td>{note.PT0 || 0}</td>
       <td>{note.FB ? null : <Ball />}</td>
@@ -19,11 +19,11 @@ function RigaBolghera(props) {
   );
 }
 
-function RigaAvversari(props) {
-  const note = props.data.note;
+function RigaAvversari({ data, nomeOspiti }) {
+  const note = data.note;
   return (
     <tr>
-      <td>{props.nomeOspiti}</td>
+      <td>{nomeOspiti}</td>
       <td>{note.SE1 || 0}</td>
       <td>{note.PT1 || 0}</td>
       <td>{note.FB ? <Ball /> : null}</td>
@@ -31,26 +31,23 @@ function RigaAvversari(props) {
   );
 }
 
-function UI(props) {
-  if (!props.data || !props.data.note) return null;
-  // const note = props.data.note;
+function UI({ data, inverti, nomeCasa, nomeOspiti }) {
+  if (!data || !data.note) return null;
   return (
     <table
-      className={`punteggio punteggio-corto masc ${calc_set_match_point(
-        props.data
-      )}`}
+      className={`punteggio punteggio-corto masc ${calc_set_match_point(data)}`}
     >
       <thead />
       <tbody>
-        {props.inverti ? (
+        {inverti ? (
           <>
-            <RigaAvversari {...props} />
-            <RigaBolghera {...props} />
+            <RigaAvversari data={data} nomeOspiti={nomeOspiti} />
+            <RigaBolghera data={data} nomeCasa={nomeCasa} />
           </>
         ) : (
           <>
-            <RigaBolghera {...props} />
-            <RigaAvversari {...props} />
+            <RigaBolghera nomeCasa={nomeCasa} />
+            <RigaAvversari nomeOspiti={nomeOspiti} />
           </>
         )}
       </tbody>
