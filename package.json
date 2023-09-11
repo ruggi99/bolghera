@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.33.1",
+    "@supabase/supabase-js": "^2.33.2",
     "bulma": "^0.9.3",
     "next": "~13.4.19",
     "react": "18.2.0",
