@@ -11,7 +11,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.37.0",
     "bulma": "^0.9.3",
-    "next": "~13.5.3",
+    "next": "~13.5.4",
     "react": "18.2.0",
     "react-bulma-components": "^4.0.7",
     "react-dom": "18.2.0",
