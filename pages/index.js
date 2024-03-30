@@ -373,6 +373,7 @@ function Partita({ autorizzato, eliminaPartita, partita, updateSet }) {
         <Tag
           size="large"
           color={getResultTagColor(setLeft, setRight, bolgheraSide)}
+          className="has-text-white"
           mr="4"
         >
           {setLeft} - {setRight}
