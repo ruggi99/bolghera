@@ -6,10 +6,11 @@ function MyApp({ Component, pageProps }) {
   return (
     <>
       <Head>
-        <html data-theme="light" />
         <title>Bolghera</title>
       </Head>
-      <Component {...pageProps} />
+      <div data-theme="light">
+        <Component {...pageProps} />
+      </div>
     </>
   );
 }
